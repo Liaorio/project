@@ -1,12 +1,15 @@
-import React from "react";
 import { connect } from 'react-redux';
+import DataInputView from './DataInputView';
+import * as index from './index';
 
-class DataInput extends React.Component {
-    render() {
-        return (
-            <h1>This is test</h1>
-        )
+const mapStateToProps = state => ({
+    ...state.DataInput
+});
+
+const mapDispatchToProps = dispatch => ({
+    handleInputData: (data) => {
+        dispatch(index.inputData(data));
     }
-}
+});
 
-export default connect(null, null)(DataInput);
+export default connect(mapStateToProps, mapDispatchToProps)(DataInputView);
