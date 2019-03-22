@@ -1,6 +1,7 @@
 import React from "react";
 import {  Map, TileLayer, Rectangle } from 'react-leaflet';
-
+import 'leaflet/dist/leaflet.css';
+import './DataInput.css';
 const outer = [[50.505, -29.09], [52.505, 29.09]]
 const inner = [[49.505, -2.09], [53.505, 2.09]]
 
