@@ -9,6 +9,9 @@ const mapStateToProps = state => ({
 const mapDispatchToProps = dispatch => ({
     handleInputData: (data) => {
         dispatch(index.inputData(data));
+    },
+    handleExpandFolder: (id) => {
+        dispatch(index.expandFolder(id));
     }
 });
 

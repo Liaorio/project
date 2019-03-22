@@ -1,4 +1,18 @@
+.map-container {
+    display: flex;
+    width: 80%;
+    margin: 0 10%;
+    padding-top: 10vh;
+}
+
 .leaflet-container {
-    height: 600px;
-    width: 600px;
+    height: 80vh;
+    width: 70%;
+}
+
+.info-container {
+    background: #f7f1e3;
+    width: 30%;
+    height: 80vh;
+    overflow: scroll;
 }
