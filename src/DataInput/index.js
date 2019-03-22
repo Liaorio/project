@@ -28,11 +28,13 @@ export default (state = initialState, action) => {
             };
 
         case EXPAND_FOLDER:
-            let activedIds = state.activeId, newId = action.id;
+            let activedIds = [...state.activeId], newId = action.id;
             if (Array.isArray(newId)) {
                 activedIds = newId;
             } else {
-                activedIds.push(newId);
+                if(!activedIds.includes(newId)) {
+                    activedIds.push(newId);
+                }
             }
             return {
                 ...state,

@@ -32,13 +32,15 @@ export default class DataInputView extends Component {
   map.on(L.Draw.Event.CREATED, (e) => {
     //const type = e.layerType;
     const layer = e.layer;
-
     drawnItems.addLayer(layer);
-    layer.on('click', () => {console.log(e);})
-    this.props.handleInputData({id: `${layer['_leaflet_id']}`, name: 'test'})
+
+    let leafId = `${layer['_leaflet_id']}`;
+    layer.on('click', () => { this.handleExpandFolder(leafId);} );
+    this.props.handleInputData({id: `${leafId}`, name: 'test'});
+
     //console.log('LAYER ADDED:', layer)
-    console.log('GEO JSONNNN', drawnItems.toGeoJSON());
-    console.log('GET THEM LAYERS', drawnItems.getLayers());
+    //console.log('GEO JSONNNN', drawnItems.toGeoJSON());
+    //console.log('GET THEM LAYERS', drawnItems.getLayers());
   });
 
   map.on(L.Draw.Event.EDITED, (e) => {
@@ -47,7 +49,7 @@ export default class DataInputView extends Component {
    });
   }
 
-  callback(key) {
+  handleExpandFolder(key) {
     this.props.handleExpandFolder(key);
   }
   
@@ -70,7 +72,7 @@ export default class DataInputView extends Component {
         </Map>
 
         <div className="info-container">
-          <Collapse onChange={key => this.callback(key)} activeKey={activeId}>
+          <Collapse onChange={key => this.handleExpandFolder(key)} activeKey={activeId}>
             {data.map((item, index) => 
               <Panel header={item.id} key={`${item.id}`}>
                 <p>{item.id}</p>
