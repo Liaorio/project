@@ -10,7 +10,7 @@ import DataInputPage from '../DataInput/DataInput';
 class Root extends React.Component {
   render() {
     return (
-      <div className="App">
+      <div>
           <Route exact path="/" component={HomePage} />
           <Route path="/dataInput" component={DataInputPage}></Route>
       </div>
