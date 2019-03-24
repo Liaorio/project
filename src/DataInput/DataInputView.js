@@ -67,7 +67,7 @@ export default class DataInputView extends Component {
 					currentLocation: [location.coords.latitude, location.coords.longitude]
 				});
 			},
-			error => alert(error.message), {
+			error => alert(`Cannot get your location: ${error.message}`), {
 				enableHighAccuracy: true,
 				timeout: 20000,
 				maximumAge: 1000
