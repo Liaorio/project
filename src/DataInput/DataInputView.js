@@ -1,13 +1,17 @@
 import React, { Component } from 'react';
-import { Map, TileLayer, Marker } from 'react-leaflet';
+import { Map, TileLayer, Marker, ImageOverlay } from 'react-leaflet';
 import { Collapse, Empty} from 'antd';
-
 import * as L from 'leaflet';
-import './DataInput.css';
-
+import ImageUpload from './Component/ImageUpload';
 import 'leaflet-draw';
+
+import './DataInput.css';
 import 'leaflet/dist/leaflet.css';
 import 'leaflet-draw/dist/leaflet.draw.css';
+
+const defaultMapAddress = "http://a.tile.stamen.com/watercolor/{z}/{x}/{y}.jpg";
+const defaultAttribution = '&copy; by <a target="_top" href="http://stamen.com">Stamen Design</a>';
+const iconUrl = "http://krimsonsalon.com/img/icon_address.png";
 
 export default class DataInputView extends Component {
 
@@ -50,7 +54,7 @@ export default class DataInputView extends Component {
 				id: `${leafId}`,
 				name: 'test'
 			});
-			//console.log('GEO JSONNNN', drawnItems.toGeoJSON());
+			console.log('GEO JSONNNN', drawnItems.toGeoJSON());
 			//console.log('GET THEM LAYERS', drawnItems.getLayers());
 		});
 		map.on(L.Draw.Event.EDITED, (e) => {
@@ -80,41 +84,46 @@ export default class DataInputView extends Component {
 	}
 
 	render() {
-		let { data,activeId } = this.props;
+		let { data, activeId, mapOrPictureAddress } = this.props;
 		const Panel = Collapse.Panel;
 
-		return ( 
-			<div className = "map-container" >
-				<Map 
-					ref = {m => { this.leafletMap = m;}} 
-					center = {this.state.currentLocation ? this.state.currentLocation :[42.617970, -70.670862]} 
-					zoom = {15}>
-					<TileLayer url = "http://a.tile.stamen.com/watercolor/{z}/{x}/{y}.jpg"
-					attribution = '&copy; <a id="home-link" target="_top" href="../">Map tiles</a> by <a target="_top" href="http://stamen.com">Stamen Design</a>, under <a target="_top" href="http://creativecommons.org/licenses/by/3.0">CC BY 3.0</a>. Data by <a target="_top" href="http://openstreetmap.org">OpenStreetMap</a>, under <a target="_top" href="http://creativecommons.org/licenses/by-sa/3.0">CC BY SA</a>' />
-					{   this.state.currentLocation ?
-						<Marker
-						id={1}
-						key={1}
-						position={this.state.currentLocation}
-						icon={L.icon({ iconUrl: 'http://krimsonsalon.com/img/icon_address.png' })} />:
-						<span></span>
-					}
-				</Map>
+		let mapAdress = mapOrPictureAddress ? mapOrPictureAddress : defaultMapAddress;
+		let zoomVal = mapOrPictureAddress ? 0 : 15;
+		
+		let mapLayer = 
+			<TileLayer url={mapAdress} attribution={defaultAttribution}>
+				{this.state.currentLocation 
+					? <Marker id={1} key={1} position={this.state.currentLocation} icon={L.icon({ iconUrl: "http://krimsonsalon.com/img/icon_address.png" })} /> 
+					: <span></span>
+				}
+			</TileLayer>
 
-				<div className = "info-container" >
-					{data.length > 0 ? 
-					<Collapse onChange = {key => this.handleExpandFolder(key)} activeKey = {activeId}> 
-						{data.map((item, index) =>
-							<Panel header = {item.id} key = {`${item.id}`}>
-								<p> {item.id} </p> 
-							</Panel>)
-						} 
-					</Collapse> 		
-						:
-					<Empty description="No position selected..." style={{marginTop: '30vh'}}/>
-					}
-					
+		return (
+			<div>
+				<div className = "map-container" >
+					<Map 
+						ref={m => { this.leafletMap = m;}} 
+						center={this.state.currentLocation ? this.state.currentLocation :[42.617970, -70.670862]} 
+						zoom={zoomVal}>
+						{mapOrPictureAddress 
+							? <ImageOverlay url={mapOrPictureAddress} bounds={[[40, -74], [40, -74]]} />
+							: mapLayer
+						}
+					</Map>
+					<div className = "info-container" >
+						{data.length > 0 
+							? <Collapse onChange = {key => this.handleExpandFolder(key)} activeKey = {activeId}> 
+								{data.map((item, index) =>
+									<Panel header = {item.id} key = {`${item.id}`}>
+										<p> {item.id} </p> 
+									</Panel>)
+								} 
+							</Collapse> 		
+							: <Empty description="No position selected..." style={{marginTop: '30vh'}}/>
+						}		
+					</div>
 				</div>
+				<ImageUpload handleUpload={this.props.handleUploadLayer} />
 			</div>
 		);
 	}

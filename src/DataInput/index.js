@@ -1,7 +1,7 @@
 
 const INPUT_DATA = 'DataInput/INPUT_DATA';
 const EXPAND_FOLDER = 'DataInput/EXPAND_FOLDER';
-
+const UPLOAD_LAYER = 'DataInput/UPLOAD_LAYER'
 
 export const inputData = (data) => ({
     type: INPUT_DATA,
@@ -11,11 +11,17 @@ export const inputData = (data) => ({
 export const expandFolder = (id) => ({
     type: EXPAND_FOLDER,
     id
+});
+
+export const uploadLayer = (layerAddress) => ({
+    type: UPLOAD_LAYER,
+    layerAddress
 })
 
 const initialState = {
     data: [],
-    activeId: []
+    activeId: [],
+    mapOrPictureAddress: null
 };
 
 export default (state = initialState, action) => {
@@ -39,6 +45,12 @@ export default (state = initialState, action) => {
             return {
                 ...state,
                 activeId: activedIds
+            }
+        
+        case UPLOAD_LAYER:
+            return {
+                ...state,
+                mapOrPictureAddress: action.layerAddress
             }
 
         default:
