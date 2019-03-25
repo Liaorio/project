@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { Route, withRouter } from "react-router-dom";
+import { Route, BrowserRouter as Router } from "react-router-dom";
 import { connect } from 'react-redux';
 import { push } from 'react-router-redux';
 
@@ -10,10 +10,10 @@ import DataInputPage from '../DataInput/DataInput';
 class Root extends React.Component {
 	render() {
 		return ( 
-			<div>
+			<Router>
 				<Route exact path="/" component={HomePage} /> 
 				<Route path="/dataInput" component={DataInputPage} />  
-			</div>
+			</Router>
 		);
 	}
 }
@@ -32,4 +32,4 @@ const mapDispatchToProps = (dispatch) => {
 	};
 };
 
-export default withRouter(connect(mapStateToProps, mapDispatchToProps)(Root));
+export default connect(mapStateToProps, mapDispatchToProps)(Root);

@@ -1,8 +1,9 @@
 import React, { Component } from 'react';
 import { Map, TileLayer, Marker, ImageOverlay } from 'react-leaflet';
-import { Collapse, Empty, Radio } from 'antd';
+import { Collapse, Empty, Radio, Button } from 'antd';
 import * as L from 'leaflet';
 import ImageUpload from './Component/ImageUpload';
+import * as DataHelper from './DataHelper';
 import 'leaflet-draw';
 
 import './DataInput.css';
@@ -43,7 +44,7 @@ export default class DataInputView extends Component {
 		});
 		map.addControl(drawControl);
 		map.on(L.Draw.Event.CREATED, (e) => {
-			//const type = e.layerType;
+			const type = e.layerType;
 			const layer = e.layer;
 			drawnItems.addLayer(layer);
 
@@ -53,7 +54,9 @@ export default class DataInputView extends Component {
 			});
 			this.props.handleInputData({
 				id: `${leafId}`,
-				name: 'test'
+				type: type,
+				length: "",
+				width: "",
 			});
 			//console.log('GEO JSONNNN', drawnItems.toGeoJSON());
 			//console.log('GET THEM LAYERS', drawnItems.getLayers());
@@ -114,7 +117,6 @@ export default class DataInputView extends Component {
 						</div>
 					</Panel>	
 				</Collapse>
-
 				<div className="map-container" >
 					<Map 
 						ref={m => { this.leafletMap = m;}} 
@@ -125,17 +127,20 @@ export default class DataInputView extends Component {
 							: mapLayer
             			}
 					</Map>
-					<div className = "info-container" >
+					<div className = "info-container">
 						{data.length > 0 
 							? <Collapse onChange={key => this.handleExpandFolder(key)} activeKey={activeId}> 
-								{data.map((item, index) =>
-									<Panel header = {item.id} key = {`${item.id}`}>
-										<p> {item.id} </p> 
+								{data.map(item =>
+									<Panel header={item.type} key={`${item.id}`}>
+										{DataHelper.getDataInputTable(item, `${item.id}`, this.props.handleUpdateInfo)} 
 									</Panel>)
 								} 
 							</Collapse> 		
 							: <Empty description="No position selected..." style={{marginTop: '30vh'}}/>
-						}		
+						}
+						<div className="cal-button-panel">
+							<Button type="primary" icon="form" disabled={data.length === 0}>Calculate</Button>
+						</div>
 					</div>
 				</div>
 			</div>
