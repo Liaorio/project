@@ -13,8 +13,11 @@ const mapDispatchToProps = dispatch => ({
     handleExpandFolder: (id) => {
         dispatch(index.expandFolder(id));
     },
-    handleUploadLayer: (address) => {
-        dispatch(index.uploadLayer(address));
+    handleUploadPicture: (url) => {
+        dispatch(index.uploadPicture(url));
+    },
+    handleSelectLayerType: (layerType) => {
+        dispatch(index.selectLayerType(layerType));
     }
 });
 

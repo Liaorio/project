@@ -1,18 +1,35 @@
-.map-container {
-    display: flex;
-    width: 80%;
-    margin: 0 10%;
+.wrapper {
+    height: 100vh;
     padding-top: 5vh;
 }
 
-.leaflet-container {
+.map-container {
+    display: flex;
     height: 80vh;
+    width: 80%;
+    margin: 0 10%;
+}
+
+.leaflet-container {
     width: 70%;
 }
 
 .info-container {
     background: #f7f1e3;
     width: 30%;
-    height: 80vh;
     overflow: scroll;
 }
+
+.preset-container {
+    width: 80%;
+    margin: 0 10%;
+}
+
+.preview-component {
+    display: flex;
+}
+
+.file-input {
+    border: #E3E3E3 1px solid;
+    margin-top: -2px
+} 

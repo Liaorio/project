@@ -1,7 +1,8 @@
 
 const INPUT_DATA = 'DataInput/INPUT_DATA';
 const EXPAND_FOLDER = 'DataInput/EXPAND_FOLDER';
-const UPLOAD_LAYER = 'DataInput/UPLOAD_LAYER'
+const UPLOAD_LAYER = 'DataInput/UPLOAD_LAYER';
+const SELECT_LAYER_TYPE = 'DataInput/SELECT_LAYER_TYPE';
 
 export const inputData = (data) => ({
     type: INPUT_DATA,
@@ -13,15 +14,23 @@ export const expandFolder = (id) => ({
     id
 });
 
-export const uploadLayer = (layerAddress) => ({
+export const uploadPicture = (pictureUrl) => ({
     type: UPLOAD_LAYER,
-    layerAddress
-})
+    pictureUrl
+});
+
+export const selectLayerType = (layerType) => ({
+    type: SELECT_LAYER_TYPE,
+    layerType: layerType
+});
+
+
 
 const initialState = {
     data: [],
     activeId: [],
-    mapOrPictureAddress: null
+    layerType: 1,
+    pictureUrl: null
 };
 
 export default (state = initialState, action) => {
@@ -46,11 +55,17 @@ export default (state = initialState, action) => {
                 ...state,
                 activeId: activedIds
             }
-        
+
+        case SELECT_LAYER_TYPE:
+            return {
+                ...state,
+                layerType: action.layerType
+            }
+
         case UPLOAD_LAYER:
             return {
                 ...state,
-                mapOrPictureAddress: action.layerAddress
+                pictureUrl: action.pictureUrl
             }
 
         default:

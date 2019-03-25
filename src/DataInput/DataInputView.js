@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { Map, TileLayer, Marker, ImageOverlay } from 'react-leaflet';
-import { Collapse, Empty} from 'antd';
+import { Collapse, Empty, Radio } from 'antd';
 import * as L from 'leaflet';
 import ImageUpload from './Component/ImageUpload';
 import 'leaflet-draw';
@@ -12,6 +12,7 @@ import 'leaflet-draw/dist/leaflet.draw.css';
 const defaultMapAddress = "http://a.tile.stamen.com/watercolor/{z}/{x}/{y}.jpg";
 const defaultAttribution = '&copy; by <a target="_top" href="http://stamen.com">Stamen Design</a>';
 const iconUrl = "http://krimsonsalon.com/img/icon_address.png";
+const layerTypeObj = Object.freeze({ Map: 1, Picture: 2 });
 
 export default class DataInputView extends Component {
 
@@ -54,7 +55,7 @@ export default class DataInputView extends Component {
 				id: `${leafId}`,
 				name: 'test'
 			});
-			console.log('GEO JSONNNN', drawnItems.toGeoJSON());
+			//console.log('GEO JSONNNN', drawnItems.toGeoJSON());
 			//console.log('GET THEM LAYERS', drawnItems.getLayers());
 		});
 		map.on(L.Draw.Event.EDITED, (e) => {
@@ -84,35 +85,49 @@ export default class DataInputView extends Component {
 	}
 
 	render() {
-		let { data, activeId, mapOrPictureAddress } = this.props;
-		const Panel = Collapse.Panel;
-
-		let mapAdress = mapOrPictureAddress ? mapOrPictureAddress : defaultMapAddress;
-		let zoomVal = mapOrPictureAddress ? 0 : 15;
-		
+		let { data, activeId, layerType, pictureUrl } = this.props;
+		let usePicture = layerType === layerTypeObj.Picture
+		const Panel = Collapse.Panel, RadioGroup = Radio.Group;
+		let zoomVal = usePicture ? 0 : 15;
+		let centerValue = usePicture ? [0, 0] : (this.state.currentLocation ? this.state.currentLocation : [42, -70] );
+    
 		let mapLayer = 
-			<TileLayer url={mapAdress} attribution={defaultAttribution}>
-				{this.state.currentLocation 
-					? <Marker id={1} key={1} position={this.state.currentLocation} icon={L.icon({ iconUrl: "http://krimsonsalon.com/img/icon_address.png" })} /> 
-					: <span></span>
-				}
-			</TileLayer>
+			<div>
+				<TileLayer url={defaultMapAddress} attribution={defaultAttribution} />
+					{this.state.currentLocation 
+						? <Marker id={1} key={1} position={this.state.currentLocation} icon={L.icon({ iconUrl: iconUrl })} /> 
+						: <span></span>
+					}
+			</div>;
 
 		return (
-			<div>
-				<div className = "map-container" >
+			<div className="wrapper">
+				<Collapse defaultActiveKey="1" className="preset-container"> 
+					<Panel header="Preset Info" key="1">
+						<div style={{ display: 'flex' }}>
+							<RadioGroup onChange={e => this.props.handleSelectLayerType(e.target.value)} value={layerType}>
+								<Radio value={layerTypeObj.Map}>Use Map</Radio>
+								&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+								<Radio value={layerTypeObj.Picture} disabled={pictureUrl == null}>Use Picutre</Radio>
+							</RadioGroup>
+							<ImageUpload handleUpload={this.props.handleUploadPicture} pictureUrl={pictureUrl} />
+						</div>
+					</Panel>	
+				</Collapse>
+
+				<div className="map-container" >
 					<Map 
 						ref={m => { this.leafletMap = m;}} 
-						center={this.state.currentLocation ? this.state.currentLocation :[42.617970, -70.670862]} 
+						center={centerValue} 
 						zoom={zoomVal}>
-						{mapOrPictureAddress 
-							? <ImageOverlay url={mapOrPictureAddress} bounds={[[40, -74], [40, -74]]} />
+						{usePicture 
+							? <ImageOverlay url={pictureUrl} bounds={[[-200, -200], [200, 200]]} />
 							: mapLayer
-						}
+            			}
 					</Map>
 					<div className = "info-container" >
 						{data.length > 0 
-							? <Collapse onChange = {key => this.handleExpandFolder(key)} activeKey = {activeId}> 
+							? <Collapse onChange={key => this.handleExpandFolder(key)} activeKey={activeId}> 
 								{data.map((item, index) =>
 									<Panel header = {item.id} key = {`${item.id}`}>
 										<p> {item.id} </p> 
@@ -123,7 +138,6 @@ export default class DataInputView extends Component {
 						}		
 					</div>
 				</div>
-				<ImageUpload handleUpload={this.props.handleUploadLayer} />
 			</div>
 		);
 	}
