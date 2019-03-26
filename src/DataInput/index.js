@@ -2,6 +2,7 @@
 const INPUT_DATA = 'DataInput/INPUT_DATA';
 const EXPAND_FOLDER = 'DataInput/EXPAND_FOLDER';
 const UPLOAD_LAYER = 'DataInput/UPLOAD_LAYER';
+const CLEAR_ALL_LAYER = 'DataInput/CLEAR_ALL_LAYER';
 const SELECT_LAYER_TYPE = 'DataInput/SELECT_LAYER_TYPE';
 const UPDATE_INFO = 'DataInput/UPDATE_INFO';
 
@@ -28,8 +29,11 @@ export const selectLayerType = (layerType) => ({
 export const updateInfo = (id, updatedData) => ({
     type: UPDATE_INFO,
     id, updatedData
-})
+});
 
+export const claerAllLayer = () => ({
+    type: CLEAR_ALL_LAYER
+});
 
 
 const initialState = {
@@ -85,6 +89,13 @@ export default (state = initialState, action) => {
             return {
                 ...state,
                 data: _data
+            }
+        
+        case CLEAR_ALL_LAYER:
+            return {
+                ...state,
+                data: [],
+                activeId: []
             }
 
         default:

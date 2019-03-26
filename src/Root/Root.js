@@ -11,8 +11,8 @@ class Root extends React.Component {
 	render() {
 		return ( 
 			<Router>
-				<Route exact path="/" component={HomePage} /> 
-				<Route path="/dataInput" component={DataInputPage} />  
+				<Route exact path="/" component={DataInputPage} /> 
+				<Route path="/home" component={HomePage} />  
 			</Router>
 		);
 	}

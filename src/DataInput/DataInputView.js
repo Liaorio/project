@@ -10,7 +10,8 @@ import './DataInput.css';
 import 'leaflet/dist/leaflet.css';
 import 'leaflet-draw/dist/leaflet.draw.css';
 
-const defaultMapAddress = "http://a.tile.stamen.com/watercolor/{z}/{x}/{y}.jpg";
+//const defaultMapAddress = "http://a.tile.stamen.com/watercolor/{z}/{x}/{y}.jpg";
+const defaultMapAddress = "https://api.tiles.mapbox.com/v4/mapbox.streets/{z}/{x}/{y}.png?access_token=pk.eyJ1IjoibWFwYm94IiwiYSI6ImNpejY4NXVycTA2emYycXBndHRqcmZ3N3gifQ.rJcFIG214AriISLbB6B5aw";
 const defaultAttribution = '&copy; by <a target="_top" href="http://stamen.com">Stamen Design</a>';
 const iconUrl = "http://krimsonsalon.com/img/icon_address.png";
 const layerTypeObj = Object.freeze({ Map: 1, Picture: 2 });
@@ -23,6 +24,7 @@ export default class DataInputView extends Component {
 			currentLocation: null
 		}
 		this.findCoordinates = this.findCoordinates.bind(this);
+		DataHelper.overRideLeaflet(L);
 	}
 
 	componentDidMount() {
@@ -32,10 +34,25 @@ export default class DataInputView extends Component {
 		const drawControl = new L.Control.Draw({
 			position: 'topright',
 			draw: {
+				polygon: {
+					allowIntersection: true,
+					showArea: true,
+					shapeOptions: {
+						color: 'red'
+					},
+				},
 				polyline: false,
-				polygon: true,
-				circle: false,
+				circle: true,
 				marker: false,
+				circlemarker: false,
+				water: {
+					allowIntersection: true,
+					showArea: true,
+					shapeOptions: {
+						color: 'green',
+						type: 'water'
+					},
+				},
 			},
 			edit: {
 				featureGroup: drawnItems,
@@ -44,9 +61,19 @@ export default class DataInputView extends Component {
 		});
 		map.addControl(drawControl);
 		map.on(L.Draw.Event.CREATED, (e) => {
-			const type = e.layerType;
+			const type = e.layer.options.type ? e.layer.options.type : e.layerType;
+			console.log(e);
 			const layer = e.layer;
+
+
+			if (type === 'rectangle') {
+				layer.bindPopup('building');
+				layer.setStyle({
+					'fillColor': '#fffff'
+				});
+			}
 			drawnItems.addLayer(layer);
+
 
 			let leafId = `${layer['_leaflet_id']}`;
 			layer.on('click', () => {
@@ -64,6 +91,9 @@ export default class DataInputView extends Component {
 		map.on(L.Draw.Event.EDITED, (e) => {
 			//const layers = e.layers;
 			//console.log(layers);
+		});
+		map.on(L.Draw.Event.DELETED, (e) => {
+			this.props.handleClearAllLayer();
 		});
 		this.findCoordinates();
 	}
@@ -91,7 +121,7 @@ export default class DataInputView extends Component {
 		let { data, activeId, layerType, pictureUrl } = this.props;
 		let usePicture = layerType === layerTypeObj.Picture
 		const Panel = Collapse.Panel, RadioGroup = Radio.Group;
-		let zoomVal = usePicture ? 0 : 15;
+		let zoomVal = usePicture ? 0 : 18;
 		let centerValue = usePicture ? [0, 0] : (this.state.currentLocation ? this.state.currentLocation : [42, -70] );
     
 		let mapLayer = 

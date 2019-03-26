@@ -21,6 +21,9 @@ const mapDispatchToProps = dispatch => ({
     },
     handleUpdateInfo: (id, newData) => {
         dispatch(index.updateInfo(id, newData));
+    },
+    handleClearAllLayer: () => {
+        dispatch(index.claerAllLayer());
     }
 });
 
