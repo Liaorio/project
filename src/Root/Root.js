@@ -4,7 +4,7 @@ import { Route, BrowserRouter as Router } from "react-router-dom";
 import { connect } from 'react-redux';
 import { push } from 'react-router-redux';
 
-// import HomePage from '../Home/Home';
+import HomePage from '../Home/Home';
 import DataInputPage from '../DataInput/DataInput';
 
 class Root extends React.Component {
@@ -12,7 +12,7 @@ class Root extends React.Component {
 		return ( 
 			<Router>
 				<Route exact path="/" component={DataInputPage} /> 
-				{/* <Route path="/dataInput" component={DataInputPage} />   */}
+				<Route path="/home" component={HomePage} />  
 			</Router>
 		);
 	}
