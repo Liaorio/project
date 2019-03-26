@@ -5,7 +5,7 @@
 
 .map-container {
     display: flex;
-    height: 80vh;
+    height: 75vh;
     width: 80%;
     margin: 0 10%;
 }
@@ -35,6 +35,13 @@
 } 
 
 .cal-button-panel {
-    margin-top: 50px;
+    margin: 50px 0;
     text-align: center;
+}
+
+.img-preview img {
+    width: 50px;
+    height: 30px;
+    margin-left: 20px;
+    margin-top: -3px;
 }

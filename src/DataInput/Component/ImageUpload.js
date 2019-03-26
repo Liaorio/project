@@ -17,7 +17,7 @@ export default class ImageUpload extends React.Component {
         let { pictureUrl } = this.props;
         let imagePreview = null;
         if (pictureUrl) {
-            imagePreview = (<img width={50} src={pictureUrl} alt="" />);
+            imagePreview = (<img src={pictureUrl} alt="" />);
         } else {
             imagePreview = (<span></span>);
         }
@@ -26,7 +26,7 @@ export default class ImageUpload extends React.Component {
                 <form>
                     <input className="file-input" type="file" onChange={e => this.handleImageChange(e)}/> 
                 </form> 
-                <div className="imgPreview">{imagePreview}</div> 
+                <div className="img-preview">{imagePreview}</div> 
             </div>
         )
     }
