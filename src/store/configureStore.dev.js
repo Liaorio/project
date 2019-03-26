@@ -1,6 +1,6 @@
 import { createStore, applyMiddleware, compose } from 'redux'
 import { createLogger } from 'redux-logger'
-import { rootReducer } from './Root/rootReducer'
+import { rootReducer } from '../Root/rootReducer'
 
 const configureStore = preloadedState => {
 	const store = createStore(
@@ -13,7 +13,7 @@ const configureStore = preloadedState => {
 
 	if (module.hot) {
 		// Enable Webpack hot module replacement for reducers
-		module.hot.accept('./Root/rootReducer', () => {
+		module.hot.accept('../Root/rootReducer', () => {
 			store.replaceReducer(rootReducer)
 		})
 	}
