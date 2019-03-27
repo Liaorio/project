@@ -1,5 +1,5 @@
 .wrapper {
-    height: 100vh;
+    min-height: 95vh;
     padding-top: 5vh;
 }
 
@@ -46,14 +46,14 @@
     margin-top: -3px;
 }
 
-.rectangle {
+.house {
     text-align: center;
     color: #fff;
     border-radius: 6px;
     background: red;
 }
 
-.circle {
+.hole {
     text-align: center;
     color: #fff;
     border-radius: 6px;

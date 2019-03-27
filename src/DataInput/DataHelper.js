@@ -70,13 +70,13 @@ export function overRideLeaflet(L) {
                 title: "Draw a Ground"
             },
             {
-                enabled: this.options.rectangle,
-                handler: new L.Draw.Rectangle(map, this.options.rectangle),
+                enabled: this.options.house,
+                handler: new L.Draw.Rectangle(map, this.options.house),
                 title: "Draw a House"
             },
             {
-                enabled: this.options.circle,
-                handler: new L.Draw.Circle(map, this.options.circle),
+                enabled: this.options.hole,
+                handler: new L.Draw.Circle(map, this.options.hole),
                 title: "Draw a Hole"
             }
         ];

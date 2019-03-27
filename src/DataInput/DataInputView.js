@@ -11,14 +11,13 @@ import 'leaflet/dist/leaflet.css';
 import 'leaflet-draw/dist/leaflet.draw.css';
 
 //const defaultMapAddress = "http://a.tile.stamen.com/watercolor/{z}/{x}/{y}.jpg";
-const water = "water";
-const ground = "ground";
-
 const defaultMapAddress = "https://api.tiles.mapbox.com/v4/mapbox.streets/{z}/{x}/{y}.png?access_token=pk.eyJ1IjoibWFwYm94IiwiYSI6ImNpejY4NXVycTA2emYycXBndHRqcmZ3N3gifQ.rJcFIG214AriISLbB6B5aw";
 const defaultAttribution = '&copy; by <a target="_top" href="http://stamen.com">Stamen Design</a>';
 const iconUrl = "http://krimsonsalon.com/img/icon_address.png";
+const water = "water", ground = "ground", house = "house", hole = "hole";
+const Water = "Water", Ground = "Ground", House = "House", Hole = "Hole";
 const tileTypeObj = Object.freeze({ Map: 1, Picture: 2 });
-const layerTypeObj = Object.freeze({ rectangle: "House", circle: "Hole", water: water, ground: ground });
+const layerTypeObj = Object.freeze({ house: House, hole: Hole, water: Water, ground: Ground });
 
 
 export default class DataInputView extends Component {
@@ -32,8 +31,8 @@ export default class DataInputView extends Component {
 		DataHelper.overRideLeaflet(L);
 	}
 
-	addMarker(map, layer, type) {
-		layer.bindPopup(`<div class=${type}>${layerTypeObj[type]}</div>`, { closeOnClick: false, autoClose: false });
+	addMarker(map, layer, type, title) {
+		layer.bindPopup(`<div class=${type}>${title}</div>`, { closeOnClick: false, autoClose: false });
 		map.addLayer(layer);
 		layer.openPopup();
 	}
@@ -48,23 +47,25 @@ export default class DataInputView extends Component {
 				water: {
 					shapeOptions: {
 						color: 'green',
-						type: 'water'
+						type: water
 					},
 				},
 				ground: {
 					shapeOptions: {
 						color: 'blue',
-						type: 'ground'
+						type: ground
 					},
 				},
-				rectangle: {
+				house: {
 					shapeOptions: {
 						color: 'red',
+						type: house
 					},
 				},
-				circle:{
+				hole:{
 					shapeOptions: {
 						color: 'orange',
+						type: hole
 					},
 				},
 				polyline: false,
@@ -80,8 +81,16 @@ export default class DataInputView extends Component {
 		map.on(L.Draw.Event.CREATED, (e) => {
 			const type = e.layer.options.type ? e.layer.options.type : e.layerType;
 			const layer = e.layer;	
+			const allLayers = drawnItems.getLayers();
+			let index = 1;
+			allLayers.forEach(item => {
+				if(item.options.type === type) {
+					index++;
+				}
+			});
+			const title =  layerTypeObj[type] + " " + index;
 
-			this.addMarker(map, layer, type);			
+			this.addMarker(map, layer, type, title);			
 			drawnItems.addLayer(layer);
 
 			let leafId = `${layer['_leaflet_id']}`;
@@ -91,11 +100,11 @@ export default class DataInputView extends Component {
 			this.props.handleInputData({
 				id: `${leafId}`,
 				type: type,
+				title: title,
 				length: "",
 				width: "",
 			});
 			//console.log('GEO JSONNNN', drawnItems.toGeoJSON());
-			//console.log('GET THEM LAYERS', drawnItems.getLayers());
 		});
 		map.on(L.Draw.Event.EDITED, (e) => {
 			//const layers = e.layers;
@@ -170,7 +179,7 @@ export default class DataInputView extends Component {
 						{data.length > 0 
 							? <Collapse onChange={key => this.handleExpandFolder(key)} activeKey={activeId}> 
 								{data.map(item =>
-									<Panel header={item.type} key={`${item.id}`}>
+									<Panel header={item.title} key={`${item.id}`}>
 										{DataHelper.getDataInputTable(item, `${item.id}`, this.props.handleUpdateInfo)} 
 									</Panel>)
 								} 
