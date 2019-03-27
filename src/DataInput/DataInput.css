@@ -46,9 +46,30 @@
     margin-top: -3px;
 }
 
-.reactangle {
+.rectangle {
     text-align: center;
     color: #fff;
     border-radius: 6px;
     background: red;
+}
+
+.circle {
+    text-align: center;
+    color: #fff;
+    border-radius: 6px;
+    background: orange;
+}
+
+.water {
+    text-align: center;
+    color: #fff;
+    border-radius: 6px;
+    background: green;
+}
+
+.ground {
+    text-align: center;
+    color: #fff;
+    border-radius: 6px;
+    background: blue;
 }
