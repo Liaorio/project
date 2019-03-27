@@ -34,25 +34,23 @@ export default class DataInputView extends Component {
 		const drawControl = new L.Control.Draw({
 			position: 'topright',
 			draw: {
-				polygon: {
-					allowIntersection: true,
-					showArea: true,
-					shapeOptions: {
-						color: 'red'
-					},
-				},
-				polyline: false,
-				circle: true,
-				marker: false,
-				circlemarker: false,
 				water: {
-					allowIntersection: true,
-					showArea: true,
 					shapeOptions: {
 						color: 'green',
 						type: 'water'
 					},
 				},
+				ground: {
+					shapeOptions: {
+						color: 'red',
+						type: 'groundÍ'
+					},
+				},
+				rectangle: true,
+				circle: true,
+				polyline: false,
+				marker: false,
+				circlemarker: false,
 			},
 			edit: {
 				featureGroup: drawnItems,
@@ -62,12 +60,12 @@ export default class DataInputView extends Component {
 		map.addControl(drawControl);
 		map.on(L.Draw.Event.CREATED, (e) => {
 			const type = e.layer.options.type ? e.layer.options.type : e.layerType;
-			console.log(e);
 			const layer = e.layer;
 
-
 			if (type === 'rectangle') {
-				layer.bindPopup('building');
+				layer.bindPopup("<div class='reactangle'>House</div>", { autoClose: false });
+				map.addLayer(layer);
+				layer.openPopup();
 				layer.setStyle({
 					'fillColor': '#fffff'
 				});

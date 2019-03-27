@@ -45,3 +45,10 @@
     margin-left: 20px;
     margin-top: -3px;
 }
+
+.reactangle {
+    text-align: center;
+    color: #fff;
+    border-radius: 6px;
+    background: red;
+}

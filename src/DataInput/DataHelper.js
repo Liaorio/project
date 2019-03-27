@@ -18,6 +18,7 @@ function getRowData(dataObj) {
     return rowData;
 }
 
+
 function gridReady(params) {
     params.api.sizeColumnsToFit();
 }
@@ -56,39 +57,28 @@ export function getDataInputTable(dataObj, id, handleUpdateInfo) {
 
 
 export function overRideLeaflet(L) {
-
     L.DrawToolbar.prototype.getModeHandlers = function (map) {
         return [
-            // {
-            // 	enabled: this.options.polyline,
-            // 	handler: new L.Draw.Polyline(map, this.options.polyline),
-            // 	title: L.drawLocal.draw.toolbar.buttons.polyline
-            // },
             {
                 enabled: this.options.water,
                 handler: new L.Draw.Polygon(map, this.options.water),
-                title: "Draw a A",
+                title: "Draw a Water",
             },
             {
-                enabled: this.options.polygon,
-                handler: new L.Draw.Polygon(map, this.options.polygon),
-                title: "Draw a B"
+                enabled: this.options.ground,
+                handler: new L.Draw.Polygon(map, this.options.ground),
+                title: "Draw a Ground"
             },
             {
                 enabled: this.options.rectangle,
                 handler: new L.Draw.Rectangle(map, this.options.rectangle),
-                title: "Draw a C"
+                title: "Draw a House"
             },
             {
                 enabled: this.options.circle,
                 handler: new L.Draw.Circle(map, this.options.circle),
-                title: "Draw a D"
-            },
-            // {
-            // 	enabled: this.options.marker,
-            // 	handler: new L.Draw.Marker(map, this.options.marker),
-            // 	title: L.drawLocal.draw.toolbar.buttons.marker
-            // }
+                title: "Draw a Hole"
+            }
         ];
     };
 }
