@@ -5,6 +5,7 @@ const UPLOAD_LAYER = 'DataInput/UPLOAD_LAYER';
 const CLEAR_ALL_LAYER = 'DataInput/CLEAR_ALL_LAYER';
 const SELECT_LAYER_TYPE = 'DataInput/SELECT_LAYER_TYPE';
 const UPDATE_INFO = 'DataInput/UPDATE_INFO';
+const GET_RESULT = 'DataInput/GET_RESULT';
 
 export const inputData = (data) => ({
     type: INPUT_DATA,
@@ -35,12 +36,17 @@ export const claerAllLayer = () => ({
     type: CLEAR_ALL_LAYER
 });
 
+export const getResult = () => ({
+    type: GET_RESULT
+})
+
 
 const initialState = {
     data: [],
     activeId: [],
     layerType: 1,
-    pictureUrl: null
+    pictureUrl: null,
+    resultData: null
 };
 
 export default (state = initialState, action) => {
@@ -96,6 +102,12 @@ export default (state = initialState, action) => {
                 ...state,
                 data: [],
                 activeId: []
+            }
+
+        case GET_RESULT:
+            return {
+                ...state,
+                resultData: [...state.data]
             }
 
         default:

@@ -5,9 +5,11 @@ import 'ag-grid-community/dist/styles/ag-theme-balham.css';
 
 const Name = "Name", name = "name";
 const Value = "Value", value = "value";
-const inputTableRows = ["length", "width"];
+const Width = "Width", width = "width";
+const Length = "Length", length = "length";
+const inputTableRows = [length, width];
 
-function getRowData(dataObj) {
+function getInputRowData(dataObj) {
     let rowData = [];
     inputTableRows.forEach(key => {
         let row = {};
@@ -18,20 +20,20 @@ function getRowData(dataObj) {
     return rowData;
 }
 
-
 function gridReady(params) {
     params.api.sizeColumnsToFit();
 }
 
+function getResultRowData(data) {
+    return data.map(item => { return { [name]: item.title, [width]: item.width, [length]: item.length }});
+}
 
-function getAgGridTable(rowData, columnDefs, styles, updateFunc) {
+function getAgGridTable(rowData, columnDefs, styles = { height: 'auto' }, updateFunc = null) {
     return (
         <div className="ag-theme-balham" style={{ height: styles.height }}>
             <AgGridReact
                 columnDefs={columnDefs}
                 rowData={rowData}
-                suppressContextMenu={true}
-                enableCellChangeFlash={true}
                 domLayout={ styles.height ? "autoHeight" : "normal"}
                 onCellValueChanged={updateFunc}
                 onGridReady={gridReady}
@@ -40,8 +42,12 @@ function getAgGridTable(rowData, columnDefs, styles, updateFunc) {
     )
 }
 
+
+//------------------------------export functions-----------------------------//
+
+
 export function getDataInputTable(dataObj, id, handleUpdateInfo) {
-    let rowData = getRowData(dataObj);
+    let rowData = getInputRowData(dataObj);
     let columnDefs = [
         { headerName: Name, field: name, width: 100 },
         { headerName: Value, field: value, editable: true },
@@ -53,6 +59,23 @@ export function getDataInputTable(dataObj, id, handleUpdateInfo) {
         handleUpdateInfo(id, params.data)
     };
     return getAgGridTable(rowData, columnDefs, styles, updateFunc);
+}
+
+
+export function isVaildToCalculate(data) {
+    let result = data.length > 0 && data.every(item => Object.values(item).every(subItem => subItem !== ""));
+    return !result;
+}
+
+
+export function getResultTables(sourceData) {
+    let rowData = getResultRowData(sourceData);
+    let columnDefs = [
+        { headerName: Name, field: name },
+        { headerName: Width, field: width },
+        { headerName: Length, field: length },
+    ];
+    return getAgGridTable(rowData, columnDefs);
 }
 
 

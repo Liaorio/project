@@ -4,6 +4,7 @@ import { Collapse, Empty, Radio, Button } from 'antd';
 import * as L from 'leaflet';
 import ImageUpload from './Component/ImageUpload';
 import * as DataHelper from './DataHelper';
+import ResultTable from './Component/ResultTables';
 import 'leaflet-draw';
 
 import './DataInput.css';
@@ -25,7 +26,7 @@ export default class DataInputView extends Component {
 	constructor(props) {
 		super(props);
 		this.state = {
-			currentLocation: null
+			currentLocation: null,
 		}
 		this.findCoordinates = this.findCoordinates.bind(this);
 		DataHelper.overRideLeaflet(L);
@@ -136,7 +137,7 @@ export default class DataInputView extends Component {
 	}
 
 	render() {
-		let { data, activeId, layerType, pictureUrl } = this.props;
+		let { data, activeId, layerType, pictureUrl, resultData } = this.props;
 		let usePicture = layerType === tileTypeObj.Picture
 		const Panel = Collapse.Panel, RadioGroup = Radio.Group;
 		let zoomVal = usePicture ? 0 : 18;
@@ -187,10 +188,11 @@ export default class DataInputView extends Component {
 							: <Empty description="No position selected..." style={{marginTop: '30vh'}}/>
 						}
 						<div className="cal-button-panel">
-							<Button type="primary" icon="form" disabled={data.length === 0}>Calculate</Button>
+							<Button type="primary" icon="form" disabled={DataHelper.isVaildToCalculate(data)} onClick={() => this.props.handleGetResult()}>Calculate</Button>
 						</div>
 					</div>
 				</div>
+				{ resultData ? <ResultTable data={resultData} /> : <span></span> }
 			</div>
 		);
 	}

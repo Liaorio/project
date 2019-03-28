@@ -24,6 +24,9 @@ const mapDispatchToProps = dispatch => ({
     },
     handleClearAllLayer: () => {
         dispatch(index.claerAllLayer());
+    },
+    handleGetResult: () => {
+        dispatch(index.getResult());
     }
 });
 

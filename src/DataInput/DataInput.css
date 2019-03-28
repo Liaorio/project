@@ -20,9 +20,13 @@
     overflow: scroll;
 }
 
-.preset-container {
+.preset-container, .result-container {
     width: 80%;
     margin: 0 10%;
+}
+
+.result-container {
+    margin-top: 50px;
 }
 
 .preview-component {
