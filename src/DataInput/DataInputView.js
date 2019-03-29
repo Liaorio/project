@@ -1,12 +1,12 @@
 import React, { Component } from 'react';
 import { Map, TileLayer, Marker, ImageOverlay } from 'react-leaflet';
-import { Collapse, Empty, Radio, Button } from 'antd';
+import { Collapse, Empty, Radio, Button, Input } from 'antd';
 import * as L from 'leaflet';
 import ImageUpload from './Component/ImageUpload';
 import * as DataHelper from './DataHelper';
 import ResultTable from './Component/ResultTables';
 import 'leaflet-draw';
-
+import 'leaflet-geometryutil';
 import './DataInput.css';
 import 'leaflet/dist/leaflet.css';
 import 'leaflet-draw/dist/leaflet.draw.css';
@@ -15,6 +15,10 @@ import 'leaflet-draw/dist/leaflet.draw.css';
 const defaultMapAddress = "https://api.tiles.mapbox.com/v4/mapbox.streets/{z}/{x}/{y}.png?access_token=pk.eyJ1IjoibWFwYm94IiwiYSI6ImNpejY4NXVycTA2emYycXBndHRqcmZ3N3gifQ.rJcFIG214AriISLbB6B5aw";
 const defaultAttribution = '&copy; by <a target="_top" href="http://stamen.com">Stamen Design</a>';
 const iconUrl = "http://krimsonsalon.com/img/icon_address.png";
+const api = "https://maps.googleapis.com/maps/api/geocode/json?address=";
+const apiKey = "AIzaSyC8iIraUUTwAjRCzjcIz81KVX7ML1l0IV8";
+
+
 const water = "water", ground = "ground", house = "house", hole = "hole";
 const Water = "Water", Ground = "Ground", House = "House", Hole = "Hole";
 const tileTypeObj = Object.freeze({ Map: 1, Picture: 2 });
@@ -89,10 +93,17 @@ export default class DataInputView extends Component {
 					index++;
 				}
 			});
+
 			const title =  layerTypeObj[type] + " " + index;
 
 			this.addMarker(map, layer, type, title);			
 			drawnItems.addLayer(layer);
+
+			if (type === water) {
+				// L.GeometryUtil.distance(_map, _firstLatLng, _secondLatLng); calculate distance
+				var seeArea = L.GeometryUtil.geodesicArea(layer.getLatLngs()[0]);
+				console.log(seeArea);
+			}
 
 			let leafId = `${layer['_leaflet_id']}`;
 			layer.on('click', () => {
@@ -136,10 +147,24 @@ export default class DataInputView extends Component {
 		this.props.handleExpandFolder(key);
 	}
 
+
+	handleSearchAddress(address) {
+		let requestData = address.split(' ').join('+');
+		fetch(`${api}${requestData}&key=${apiKey}`)
+			.then(response => response.json())
+			.then(json => {
+					const location = json.results[0].geometry.location;
+					this.setState({
+						currentLocation: [location.lat, location.lng]
+					});
+				}
+			);
+	}
+
 	render() {
 		let { data, activeId, layerType, pictureUrl, resultData } = this.props;
 		let usePicture = layerType === tileTypeObj.Picture
-		const Panel = Collapse.Panel, RadioGroup = Radio.Group;
+		const Panel = Collapse.Panel, RadioGroup = Radio.Group, Search = Input.Search;
 		let zoomVal = usePicture ? 0 : 18;
 		let centerValue = usePicture ? [0, 0] : (this.state.currentLocation ? this.state.currentLocation : [42, -70] );
     
@@ -156,13 +181,18 @@ export default class DataInputView extends Component {
 			<div className="wrapper">
 				<Collapse defaultActiveKey="1" className="preset-container"> 
 					<Panel header="Preset Info" key="1">
-						<div style={{ display: 'flex' }}>
+						<div>
 							<RadioGroup onChange={e => this.props.handleSelectLayerType(e.target.value)} value={layerType}>
-								<Radio value={tileTypeObj.Map}>Use Map</Radio>
-								&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-								<Radio value={tileTypeObj.Picture} disabled={pictureUrl == null}>Use Picutre</Radio>
+								<div>
+									<Radio value={tileTypeObj.Map}>Use Map</Radio>&nbsp;&nbsp;&nbsp;&nbsp;
+									<Search placeholder="Search On Map" onSearch={value => this.handleSearchAddress(value)} style={{ width: 500 }} enterButton="Search"/>
+								</div>
+								<br/>
+								<div style={{ display: 'flex' }}>
+									<Radio value={tileTypeObj.Picture} disabled={pictureUrl == null}>Use Picutre</Radio>
+									<ImageUpload handleUpload={this.props.handleUploadPicture} pictureUrl={pictureUrl} />
+								</div>								
 							</RadioGroup>
-							<ImageUpload handleUpload={this.props.handleUploadPicture} pictureUrl={pictureUrl} />
 						</div>
 					</Panel>	
 				</Collapse>

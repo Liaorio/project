@@ -27,6 +27,7 @@
 
 .result-container {
     margin-top: 50px;
+    margin-bottom: 20px;
 }
 
 .preview-component {
@@ -35,7 +36,8 @@
 
 .file-input {
     border: #E3E3E3 1px solid;
-    margin-top: -2px
+    margin-top: -2px;
+    width: 500px;
 } 
 
 .cal-button-panel {

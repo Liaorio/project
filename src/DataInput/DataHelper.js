@@ -101,7 +101,12 @@ export function overRideLeaflet(L) {
                 enabled: this.options.hole,
                 handler: new L.Draw.Circle(map, this.options.hole),
                 title: "Draw a Hole"
-            }
+            },
+            // {
+            //     enabled: this.options.polyline,
+            //     handler: new L.Draw.Polyline(map, this.options.polyline),
+            //     title: "Draw a ployline"
+            // }
         ];
     };
 }

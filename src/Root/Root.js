@@ -20,8 +20,8 @@ class Root extends React.Component {
 						<Route path="/home" component={HomePage} />  
 					</Router>
 				</Content>
-				<Footer style={{ padding: '10px 0 0 0', textAlign: 'center', height: '3vh' }}>
-      				TR Project ©2019 Created by <a href="Mailto: liaorio@gmail.com">Ao Li</a>
+				<Footer style={{ padding: 0, textAlign: 'center', height: '3vh' }}>
+      				<span className="footerFont">TR Project ©2019 Created by <a href="Mailto: liaorio@gmail.com">Ao Li</a></span>
     			</Footer>
 			</Layout>
 		);

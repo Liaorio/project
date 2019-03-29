@@ -2,6 +2,7 @@ import { connect } from 'react-redux';
 import DataInputView from './DataInputView';
 import * as index from './index';
 
+// redux selector
 const mapStateToProps = state => ({
     ...state.DataInput
 });
