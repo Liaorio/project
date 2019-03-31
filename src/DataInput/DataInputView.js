@@ -6,7 +6,6 @@ import ImageUpload from './Component/ImageUpload';
 import * as DataHelper from './DataHelper';
 import ResultTable from './Component/ResultTables';
 import 'leaflet-draw';
-import 'leaflet-geometryutil';
 import './DataInput.css';
 import 'leaflet/dist/leaflet.css';
 import 'leaflet-draw/dist/leaflet.draw.css';
@@ -151,14 +150,19 @@ export default class DataInputView extends Component {
 	handleSearchAddress(address) {
 		let requestData = address.split(' ').join('+');
 		fetch(`${api}${requestData}&key=${apiKey}`)
-			.then(response => response.json())
-			.then(json => {
+			.then(response => {
+				if(!response.ok) {
+					throw Error(response.statusText);
+				}
+				return response.json();
+			}).then(json => {
 					const location = json.results[0].geometry.location;
 					this.setState({
 						currentLocation: [location.lat, location.lng]
 					});
-				}
-			);
+			}).catch(error => {
+				alert(`Cannot serarch your location on map: ${error.message}`);
+			});
 	}
 
 	render() {
