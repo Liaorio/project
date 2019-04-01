@@ -151,7 +151,7 @@ export default class DataInputView extends Component {
 		Modal.error({
 			title: 'Request Geo Info Failed...',
 			content: eMessage,
-		  });
+		});
 	}
 
 	handleSearchAddress(address) {
