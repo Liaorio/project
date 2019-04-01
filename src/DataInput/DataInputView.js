@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { Map, TileLayer, Marker, ImageOverlay } from 'react-leaflet';
-import { Collapse, Empty, Radio, Button, Input } from 'antd';
+import { Collapse, Empty, Radio, Button, Input, Modal } from 'antd';
 import * as L from 'leaflet';
 import ImageUpload from './Component/ImageUpload';
 import * as DataHelper from './DataHelper';
@@ -32,6 +32,7 @@ export default class DataInputView extends Component {
 			currentLocation: null,
 		}
 		this.findCoordinates = this.findCoordinates.bind(this);
+		this.handleOpenErrorDialog = this.handleOpenErrorDialog.bind(this);
 		DataHelper.overRideLeaflet(L);
 	}
 
@@ -134,9 +135,9 @@ export default class DataInputView extends Component {
 					currentLocation: [location.coords.latitude, location.coords.longitude]
 				});
 			},
-			error => alert(`Cannot get your location: ${error.message}`), {
+			error => this.handleOpenErrorDialog(error.message), {
 				enableHighAccuracy: true,
-				timeout: 20000,
+				timeout: 60000,
 				maximumAge: 1000
 			}
 		);
@@ -146,23 +147,36 @@ export default class DataInputView extends Component {
 		this.props.handleExpandFolder(key);
 	}
 
+	handleOpenErrorDialog(eMessage) {
+		Modal.error({
+			title: 'Request Geo Info Failed...',
+			content: eMessage,
+		  });
+	}
 
 	handleSearchAddress(address) {
-		let requestData = address.split(' ').join('+');
-		fetch(`${api}${requestData}&key=${apiKey}`)
-			.then(response => {
-				if(!response.ok) {
-					throw Error(response.statusText);
-				}
-				return response.json();
-			}).then(json => {
+		if(address === "") {
+			this.handleOpenErrorDialog("Please input address");
+		} else {
+			let requestData = address.split(' ').join('+');
+			fetch(`${api}${requestData}&key=${apiKey}`)
+				.then(response => {
+					if(!response.ok) {
+						throw Error(response.statusText);
+					}
+					return response.json();
+				}).then(json => {
+					if(json.error_message) {
+						throw Error(json.error_message);
+					}
 					const location = json.results[0].geometry.location;
 					this.setState({
 						currentLocation: [location.lat, location.lng]
 					});
-			}).catch(error => {
-				alert(`Cannot serarch your location on map: ${error.message}`);
-			});
+				}).catch(error => {
+					this.handleOpenErrorDialog(error.message);
+				});
+		}	
 	}
 
 	render() {
