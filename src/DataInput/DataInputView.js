@@ -1,10 +1,11 @@
 import React, { Component } from 'react';
 import { Map, TileLayer, Marker, ImageOverlay } from 'react-leaflet';
-import { Collapse, Empty, Radio, Button, Input, Modal } from 'antd';
+import { Collapse, Radio, Input, Modal } from 'antd';
 import * as L from 'leaflet';
 import ImageUpload from './Component/ImageUpload';
 import * as DataHelper from './DataHelper';
 import ResultTable from './Component/ResultTables';
+import PickedInfo from './Component/PickedInfo';
 import 'leaflet-draw';
 import './DataInput.css';
 import 'leaflet/dist/leaflet.css';
@@ -225,19 +226,13 @@ export default class DataInputView extends Component {
             			}
 					</Map>
 					<div className = "info-container">
-						{data.length > 0 
-							? <Collapse onChange={key => this.handleExpandFolder(key)} activeKey={activeId}> 
-								{data.map(item =>
-									<Panel header={item.title} key={`${item.id}`}>
-										{DataHelper.getDataInputTable(item, `${item.id}`, this.props.handleUpdateInfo)} 
-									</Panel>)
-								} 
-							</Collapse> 		
-							: <Empty description="No position selected..." style={{marginTop: '30vh'}}/>
-						}
-						<div className="cal-button-panel">
-							<Button type="primary" icon="form" disabled={DataHelper.isVaildToCalculate(data)} onClick={() => this.props.handleGetResult()}>Calculate</Button>
-						</div>
+						<PickedInfo
+							data={data}
+							activeId={activeId}
+							handleExpandFolder={key => this.handleExpandFolder(key)}
+							handleGetResult={this.props.handleGetResult}
+							handleUpdateInfo={this.props.handleUpdateInfo}
+						/>
 					</div>
 				</div>
 				{ resultData ? <ResultTable data={resultData} /> : <span></span> }

@@ -79,3 +79,10 @@
     border-radius: 6px;
     background: blue;
 }
+
+/* .leaflet-draw-draw-polygon {
+    background: url('./static/pipeline.svg')!important;
+    background-repeat: no-repeat!important;
+    background-size: 25px 25px!important;
+    background-color: #fff!important;
+} */
