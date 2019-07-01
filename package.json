@@ -4,6 +4,7 @@
 	"private": true,
 	"dependencies": {
 		"ag-grid-community": "^20.2.0",
+		"ag-grid-enterprise": "20.2.0",
 		"ag-grid-react": "^20.2.0",
 		"antd": "^3.15.1",
 		"babel-plugin-import": "^1.11.0",

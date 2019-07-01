@@ -6,8 +6,6 @@
 .map-container {
     display: flex;
     height: 75vh;
-    width: 80%;
-    margin: 0 10%;
 }
 
 .leaflet-container {
@@ -16,7 +14,6 @@
 
 .info-container {
     background: #f7f1e3;
-    width: 30%;
     overflow: scroll;
 }
 
@@ -28,6 +25,10 @@
 .result-container {
     margin-top: 50px;
     margin-bottom: 20px;
+}
+
+.preset-wrapper {
+    display: flex;
 }
 
 .preview-component {
@@ -86,3 +87,20 @@
     background-size: 25px 25px!important;
     background-color: #fff!important;
 } */
+
+
+
+/* ant design advanced */
+.table-panel .ant-collapse-content{
+    overflow-x: scroll;
+}
+
+/* ag-grid advance */
+.ag-header-cell-label {
+    overflow: visible;
+    white-space: normal;
+}
+.ag-header-cell-label .ag-header-cell-text {
+    white-space: normal!important;
+    line-height: 25px;
+}

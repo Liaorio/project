@@ -36,7 +36,7 @@ const PickedInfoContainer = ({data, activeId, handleExpandFolder, handleGetResul
                         <Panel key={key} header={<h3 style={{ fontWeight: 900 }}>{key}</h3>}>
                             <Collapse onChange={key => handleExpandFolder(key)} activeKey={activeId}> 
                                 {infoDataObj[key].map(item =>
-                                <Panel header={item.title} key={`${item.id}`}>
+                                <Panel className="table-panel" header={item.title} key={`${item.id}`}>
                                     {DataHelper.getDataInputTable(item, `${item.id}`, handleUpdateInfo)} 
                                 </Panel>)} 
                             </Collapse>

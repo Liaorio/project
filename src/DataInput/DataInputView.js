@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { Map, TileLayer, Marker, ImageOverlay } from 'react-leaflet';
-import { Collapse, Radio, Input, Modal } from 'antd';
+import { Collapse, Radio, Input, Modal, Button, Checkbox } from 'antd';
 import * as L from 'leaflet';
 import ImageUpload from './Component/ImageUpload';
 import * as DataHelper from './DataHelper';
@@ -31,9 +31,11 @@ export default class DataInputView extends Component {
 		super(props);
 		this.state = {
 			currentLocation: null,
+			tableMode: false
 		}
 		this.findCoordinates = this.findCoordinates.bind(this);
 		this.handleOpenErrorDialog = this.handleOpenErrorDialog.bind(this);
+		this.handleToggleTableMode = this.handleToggleTableMode.bind(this);
 		DataHelper.overRideLeaflet(L);
 	}
 
@@ -123,6 +125,9 @@ export default class DataInputView extends Component {
 			//const layers = e.layers;
 			//console.log(layers);
 		});
+		map.on(L.Draw.Event.DELETESTOP, e => {
+			console.log(e);
+		});
 		map.on(L.Draw.Event.DELETED, (e) => {
 			this.props.handleClearAllLayer();
 		});
@@ -153,6 +158,12 @@ export default class DataInputView extends Component {
 			title: 'Request Geo Info Failed...',
 			content: eMessage,
 		});
+	}
+
+	handleToggleTableMode() {
+		this.setState({
+			tableMode: !this.state.tableMode
+		})
 	}
 
 	handleSearchAddress(address) {
@@ -196,45 +207,56 @@ export default class DataInputView extends Component {
 					}
 			</div>;
 
+		let { tableMode } = this.state ;
+		let mapWidth = tableMode ? '0' : '70%';
+		let tableWidth = tableMode ? '100%' : '30%';
+
 		return (
 			<div className="wrapper">
-				<Collapse defaultActiveKey="1" className="preset-container"> 
-					<Panel header="Preset Info" key="1">
-						<div>
-							<RadioGroup onChange={e => this.props.handleSelectLayerType(e.target.value)} value={layerType}>
-								<div>
-									<Radio value={tileTypeObj.Map}>Use Map</Radio>&nbsp;&nbsp;&nbsp;&nbsp;
-									<Search placeholder="Search On Map" onSearch={value => this.handleSearchAddress(value)} style={{ width: 500 }} enterButton="Search"/>
+				<Collapse defaultActiveKey="1" className="preset-container">
+					<Panel header="Site Info" key="1">
+						<Collapse defaultActiveKey="1">
+							<Panel header="Preset" key="1">
+								<div className="preset-wrapper">
+									<RadioGroup onChange={e => this.props.handleSelectLayerType(e.target.value)} value={layerType}>
+										<div>
+											<Radio value={tileTypeObj.Map}>Use Map</Radio>&nbsp;&nbsp;&nbsp;&nbsp;
+											<Search placeholder="Search On Map" onSearch={value => this.handleSearchAddress(value)} style={{ width: 500 }} enterButton="Search"/>
+										</div>
+										<br/>
+										<div style={{ display: 'flex' }}>
+											<Radio value={tileTypeObj.Picture} disabled={pictureUrl == null}>Use Picutre</Radio>
+											<ImageUpload handleUpload={this.props.handleUploadPicture} pictureUrl={pictureUrl} />
+										</div>								
+									</RadioGroup>
+									<Checkbox style={{ marginLeft: "10%" }} onChange={this.handleToggleTableMode}>Table Mode</Checkbox>
 								</div>
-								<br/>
-								<div style={{ display: 'flex' }}>
-									<Radio value={tileTypeObj.Picture} disabled={pictureUrl == null}>Use Picutre</Radio>
-									<ImageUpload handleUpload={this.props.handleUploadPicture} pictureUrl={pictureUrl} />
-								</div>								
-							</RadioGroup>
+							</Panel>	
+						</Collapse>
+						<div className="map-container" >
+							<Map
+								style={{ width: mapWidth }}
+								ref={m => { this.leafletMap = m;}} 
+								center={centerValue} 
+								zoom={zoomVal}>
+								{usePicture 
+									? <ImageOverlay url={pictureUrl} bounds={[[-200, -200], [200, 200]]} />
+									: mapLayer
+								}
+							</Map>
+							<div className="info-container" style={{ width: tableWidth }}>
+								<PickedInfo
+									data={data}
+									activeId={activeId}
+									handleExpandFolder={key => this.handleExpandFolder(key)}
+									handleGetResult={this.props.handleGetResult}
+									handleUpdateInfo={this.props.handleUpdateInfo}
+								/>
+							</div>
 						</div>
-					</Panel>	
+					</Panel>            
 				</Collapse>
-				<div className="map-container" >
-					<Map 
-						ref={m => { this.leafletMap = m;}} 
-						center={centerValue} 
-						zoom={zoomVal}>
-						{usePicture 
-							? <ImageOverlay url={pictureUrl} bounds={[[-200, -200], [200, 200]]} />
-							: mapLayer
-            			}
-					</Map>
-					<div className = "info-container">
-						<PickedInfo
-							data={data}
-							activeId={activeId}
-							handleExpandFolder={key => this.handleExpandFolder(key)}
-							handleGetResult={this.props.handleGetResult}
-							handleUpdateInfo={this.props.handleUpdateInfo}
-						/>
-					</div>
-				</div>
+
 				{ resultData ? <ResultTable data={resultData} /> : <span></span> }
 			</div>
 		);

@@ -2,22 +2,24 @@ import React from 'react';
 import { AgGridReact } from 'ag-grid-react';
 import 'ag-grid-community/dist/styles/ag-grid.css';
 import 'ag-grid-community/dist/styles/ag-theme-balham.css';
+import 'ag-grid-enterprise';
 
-const Name = "Name", name = "name";
-const Value = "Value", value = "value";
-const Width = "Width", width = "width";
-const Length = "Length", length = "length";
-const inputTableRows = [length, width];
-
-function getInputRowData(dataObj) {
-    let rowData = [];
-    inputTableRows.forEach(key => {
-        let row = {};
-        row[name] = key;
-        row[value] = dataObj.hasOwnProperty(key) ? dataObj[key] : "";
-        rowData.push(row);
+const SoilInfiltrationRate = "Soil Infiltration Rate";
+const SurfaceSlope = "Surface Slope";
+const Climate = "Climate is vulnerable to cold and snowy winters";
+const Depth = "Depth of groundwater and bedrock(m)";
+const ProtectionArea = "Within 2 yr time-of-travel wellhead protection area";
+const PollutionHotSpot = "Pollution Hot Spot";
+const HeavyTrafficLoading = "Heavy Traffic Loading";
+const LandUse = "Land Use";
+ 
+function getInputRowData(columnDefs, dataObj) {
+    let rowData = {};
+    columnDefs.forEach(columnDef => {
+       rowData[columnDef.field] = null;
     });
-    return rowData;
+ 
+    return [rowData];
 }
 
 function gridReady(params) {
@@ -25,18 +27,21 @@ function gridReady(params) {
 }
 
 function getResultRowData(data) {
-    return data.map(item => { return { [name]: item.title, [width]: item.width, [length]: item.length }});
+    //return data.map(item => { return { [name]: item.title, [width]: item.width, [length]: item.length }});
+    return [];
 }
 
-function getAgGridTable(rowData, columnDefs, styles = { height: 'auto' }, updateFunc = null) {
+function getAgGridTable(rowData, columnDefs, defaultColDef, styles = { height: 'auto' }, updateFunc = null) {
     return (
-        <div className="ag-theme-balham" style={{ height: styles.height }}>
+        <div className="ag-theme-balham" style={{ height: styles.height, width: 1500 }}>
             <AgGridReact
                 columnDefs={columnDefs}
+                defaultColDef={defaultColDef}
                 rowData={rowData}
                 domLayout={ styles.height ? "autoHeight" : "normal"}
                 onCellValueChanged={updateFunc}
                 onGridReady={gridReady}
+                headerHeight={50}
             />
         </div>
     )
@@ -47,18 +52,24 @@ function getAgGridTable(rowData, columnDefs, styles = { height: 'auto' }, update
 
 
 export function getDataInputTable(dataObj, id, handleUpdateInfo) {
-    let rowData = getInputRowData(dataObj);
     let columnDefs = [
-        { headerName: Name, field: name, width: 100 },
-        { headerName: Value, field: value, editable: true },
+        { headerName: SoilInfiltrationRate, field: SoilInfiltrationRate, width: 150 },
+        { headerName: SurfaceSlope, field: SurfaceSlope, width: 150 },
+        { headerName: Climate, field: Climate },
+        { headerName: Depth, field: Depth },
+        { headerName: ProtectionArea, field: ProtectionArea },
+        { headerName: PollutionHotSpot , field: PollutionHotSpot },
+        { headerName: HeavyTrafficLoading, field: HeavyTrafficLoading },
+        { headerName: LandUse, field: LandUse }
     ];
-    let styles = {
-        height: 100
-    };
+    let defaultColDef = { editable: true };
+    let rowData = getInputRowData(columnDefs, dataObj);
+    let styles = { height: 100 };
     let updateFunc = (params) => {
         handleUpdateInfo(id, params.data)
     };
-    return getAgGridTable(rowData, columnDefs, styles, updateFunc);
+    console.log(rowData);
+    return getAgGridTable(rowData, columnDefs, defaultColDef, styles, updateFunc);
 }
 
 
@@ -69,13 +80,14 @@ export function isVaildToCalculate(data) {
 
 
 export function getResultTables(sourceData) {
-    let rowData = getResultRowData(sourceData);
-    let columnDefs = [
-        { headerName: Name, field: name },
-        { headerName: Width, field: width },
-        { headerName: Length, field: length },
-    ];
-    return getAgGridTable(rowData, columnDefs);
+    // let rowData = getResultRowData(sourceData);
+    // let columnDefs = [
+    //     { headerName: Name, field: name },
+    //     { headerName: Width, field: width },
+    //     { headerName: Length, field: length },
+    // ];
+    // return getAgGridTable(rowData, columnDefs);
+    return null;
 }
 
 
