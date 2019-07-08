@@ -27,9 +27,9 @@ export const selectLayerType = (layerType) => ({
     layerType: layerType
 });
 
-export const updateInfo = (id, updatedData) => ({
+export const updateInfo = (id, name, value) => ({
     type: UPDATE_INFO,
-    id, updatedData
+    id, name, value
 });
 
 export const claerAllLayer = () => ({
@@ -85,11 +85,10 @@ export default (state = initialState, action) => {
             }
             
         case UPDATE_INFO:
-            let updatedData = action.updatedData;
             let _data = [...state.data];
             _data.forEach(item => {
                 if(item.id === action.id) {
-                    item[updatedData.name] = updatedData.value;
+                    item[action.name] = action.value;
                 }
             });
             return {

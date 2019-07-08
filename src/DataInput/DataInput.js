@@ -20,8 +20,8 @@ const mapDispatchToProps = dispatch => ({
     handleSelectLayerType: (layerType) => {
         dispatch(index.selectLayerType(layerType));
     },
-    handleUpdateInfo: (id, newData) => {
-        dispatch(index.updateInfo(id, newData));
+    handleUpdateInfo: (id, name, value) => {
+        dispatch(index.updateInfo(id, name, value));
     },
     handleClearAllLayer: () => {
         dispatch(index.claerAllLayer());

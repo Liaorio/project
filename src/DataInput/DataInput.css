@@ -95,11 +95,29 @@
     overflow-x: scroll;
 }
 
+.info-table .ant-select-selection--single {
+    height: 25px;
+}
+ 
+.info-table .ant-select-selection--single .ant-select-selection-selected-value {
+    line-height: 25px;
+}
+
+.extra-length{
+    width: 200px!important;
+}
+ 
+
 /* ag-grid advance */
 .ag-header-cell-label {
     overflow: visible;
     white-space: normal;
 }
+
+.info-table .ag-body-viewport {
+    height: 35px;
+}
+
 .ag-header-cell-label .ag-header-cell-text {
     white-space: normal!important;
     line-height: 25px;

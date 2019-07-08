@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { Map, TileLayer, Marker, ImageOverlay } from 'react-leaflet';
-import { Collapse, Radio, Input, Modal, Button, Checkbox } from 'antd';
+import { Collapse, Radio, Input, Modal, Switch } from 'antd';
 import * as L from 'leaflet';
 import ImageUpload from './Component/ImageUpload';
 import * as DataHelper from './DataHelper';
@@ -116,8 +116,7 @@ export default class DataInputView extends Component {
 				id: `${leafId}`,
 				type: type,
 				title: title,
-				length: "",
-				width: "",
+				...DataHelper.data
 			});
 			//console.log('GEO JSONNNN', drawnItems.toGeoJSON());
 		});
@@ -229,7 +228,7 @@ export default class DataInputView extends Component {
 											<ImageUpload handleUpload={this.props.handleUploadPicture} pictureUrl={pictureUrl} />
 										</div>								
 									</RadioGroup>
-									<Checkbox style={{ marginLeft: "10%" }} onChange={this.handleToggleTableMode}>Table Mode</Checkbox>
+									<Switch style={{ marginLeft: "10%" }} onChange={this.handleToggleTableMode} />&nbsp;&nbsp;Table Mode
 								</div>
 							</Panel>	
 						</Collapse>
