@@ -1,9 +1,8 @@
 import React, { Component } from "react";
 import { Select } from 'antd';
+import * as helpers from '../DataHelper';
 
 const { Option } = Select;
-
-
 export default class SingleSelectRenderer extends Component {
 
     handleChange(name, val) {
@@ -11,12 +10,13 @@ export default class SingleSelectRenderer extends Component {
     }
 
     render() {
-        let className = this.props.colDef.width ? "extra-length": null;
-        const options = this.props.colDef.options;
+        let data = this.props.data;
+        let characteristics = data["Site Characteristics"];
+        const options = helpers.optionsMap[characteristics];
         const optionsList = Object.keys(options).map(option => 
             <Option key={options[option]} value={options[option]}>{option}</Option>)
         return (
-            <Select className={className} onChange={v => this.handleChange(this.props.colDef.name, v)} value={this.props.value} style={{ width: 120 }}>
+            <Select style={{ width: 50, height: 20 }} onChange={val => this.handleChange(characteristics, val)} value={data.Value}>
                 {optionsList}
             </Select>
         );

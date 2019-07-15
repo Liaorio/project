@@ -26,7 +26,6 @@ const PickedInfoContainer = ({data, activeId, handleExpandFolder, handleGetResul
     
     const [ activeGroup, setActiveGroup ] = useState(initialActiveGroup);
     useEffect(() => {setActiveGroup(filterActiveGroup(data, activeId))}, [activeId]);
-
     return (
         <div>
             {DataHelper.isObjectEmpty(infoDataObj) 

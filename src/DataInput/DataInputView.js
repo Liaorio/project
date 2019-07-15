@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { Map, TileLayer, Marker, ImageOverlay } from 'react-leaflet';
-import { Collapse, Radio, Input, Modal, Switch } from 'antd';
+import { Collapse, Radio, Input, Modal } from 'antd';
 import * as L from 'leaflet';
 import ImageUpload from './Component/ImageUpload';
 import * as DataHelper from './DataHelper';
@@ -31,11 +31,9 @@ export default class DataInputView extends Component {
 		super(props);
 		this.state = {
 			currentLocation: null,
-			tableMode: false
 		}
 		this.findCoordinates = this.findCoordinates.bind(this);
 		this.handleOpenErrorDialog = this.handleOpenErrorDialog.bind(this);
-		this.handleToggleTableMode = this.handleToggleTableMode.bind(this);
 		DataHelper.overRideLeaflet(L);
 	}
 
@@ -104,8 +102,9 @@ export default class DataInputView extends Component {
 
 			if (type === water) {
 				// L.GeometryUtil.distance(_map, _firstLatLng, _secondLatLng); calculate distance
-				var seeArea = L.GeometryUtil.geodesicArea(layer.getLatLngs()[0]);
-				console.log(seeArea);
+				//var seeArea = L.GeometryUtil.geodesicArea(layer.getLatLngs()[0]);
+				//console.log(seeArea);
+				
 			}
 
 			let leafId = `${layer['_leaflet_id']}`;
@@ -116,7 +115,7 @@ export default class DataInputView extends Component {
 				id: `${leafId}`,
 				type: type,
 				title: title,
-				...DataHelper.data
+				...DataHelper.dataObj
 			});
 			//console.log('GEO JSONNNN', drawnItems.toGeoJSON());
 		});
@@ -157,12 +156,6 @@ export default class DataInputView extends Component {
 			title: 'Request Geo Info Failed...',
 			content: eMessage,
 		});
-	}
-
-	handleToggleTableMode() {
-		this.setState({
-			tableMode: !this.state.tableMode
-		})
 	}
 
 	handleSearchAddress(address) {
@@ -206,10 +199,6 @@ export default class DataInputView extends Component {
 					}
 			</div>;
 
-		let { tableMode } = this.state ;
-		let mapWidth = tableMode ? '0' : '70%';
-		let tableWidth = tableMode ? '100%' : '30%';
-
 		return (
 			<div className="wrapper">
 				<Collapse defaultActiveKey="1" className="preset-container">
@@ -228,13 +217,12 @@ export default class DataInputView extends Component {
 											<ImageUpload handleUpload={this.props.handleUploadPicture} pictureUrl={pictureUrl} />
 										</div>								
 									</RadioGroup>
-									<Switch style={{ marginLeft: "10%" }} onChange={this.handleToggleTableMode} />&nbsp;&nbsp;Table Mode
 								</div>
 							</Panel>	
 						</Collapse>
 						<div className="map-container" >
 							<Map
-								style={{ width: mapWidth }}
+								style={{ width: "70%" }}
 								ref={m => { this.leafletMap = m;}} 
 								center={centerValue} 
 								zoom={zoomVal}>
@@ -243,7 +231,7 @@ export default class DataInputView extends Component {
 									: mapLayer
 								}
 							</Map>
-							<div className="info-container" style={{ width: tableWidth }}>
+							<div className="info-container" style={{ width: "30%" }}>
 								<PickedInfo
 									data={data}
 									activeId={activeId}
