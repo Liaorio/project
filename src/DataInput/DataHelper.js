@@ -5,39 +5,7 @@ import 'ag-grid-community/dist/styles/ag-theme-balham.css';
 import 'ag-grid-enterprise';
 
 import SingleSelectRenderer from './Component/SingleSelectRenderer';
-
-const SoilInfiltrationRate = "Soil Infiltration Rate < 15mm/hr";
-const SurfaceSlope = "Surface Slope (%)";
-const Climate = "Climate is vulnerable to cold and snowy winters";
-const Depth = "Depth of groundwater and bedrock(m) < 2.2";
-const ProtectionArea = "Within 2 yr time-of-travel wellhead protection area";
-const PollutionHotSpot = "Pollution Hot Spot";
-const HeavyTrafficLoading = "Heavy Traffic Loading";
-export const LandUse = "Land Use";
-
-
-export const dataObj = {
-    [SoilInfiltrationRate]: 0,
-    [SurfaceSlope]: null,
-    [Climate]: 0,
-    [Depth]: 0,
-    [ProtectionArea]: 0,
-    [PollutionHotSpot]: 0,
-    [HeavyTrafficLoading]: 0,
-    [LandUse]: null
-};
-
-export const optionsMap = {
-    [SoilInfiltrationRate]: { "yes": 1, "no": 0 },
-    [SurfaceSlope]: { "<1.0": 0, ">5.0": 1, ">10": 2, ">15": 3 },
-    [Climate]: { "yes": 1, "no": 0 },
-    [Depth]: { "yes": 1, "no": 0 },
-    [ProtectionArea]: { "yes": 1, "no": 0 },
-    [PollutionHotSpot]: { "yes": 1, "no": 0 },
-    [HeavyTrafficLoading]: { "yes": 1, "no": 0 },
-    [LandUse]: { "Residential": "Residential", "Commercial/Industrial": "Commercial/Industrial", "Row": "Row"}
-}
-
+import * as constant from './Component/Constant';
 
 const frameworkComponents = {
     singleSelectRenderer: SingleSelectRenderer,
@@ -48,7 +16,7 @@ function getInputRowData(data) {
     Object.keys(data).forEach(key => {
         if(key !== "id" && key !== "type" && key !== "title" ) {
             let rowData = {};
-            rowData["Site Characteristics"] = key;
+            rowData[constant.basicInfo[data.type].headerName] = key;
             rowData["Value"] = data[key];
             re.push(rowData);
         }
@@ -68,8 +36,9 @@ function getResultRowData(data) {
 */
 
 function getAgGridTable(rowData, columnDefs, defaultColDef) {
+    const height = (rowData.length + 1) * constant.rowHeight;
     return (
-        <div className="ag-theme-balham info-table" style={{ height: 360 }}>
+        <div className="ag-theme-balham info-table" style={{ height: height }}>
             <AgGridReact
                 columnDefs={columnDefs}
                 rowData={rowData}
@@ -78,7 +47,7 @@ function getAgGridTable(rowData, columnDefs, defaultColDef) {
                 onGridReady={gridReady}
                 frameworkComponents={frameworkComponents}
                 suppressContextMenu={true}
-                rowHeight="40"
+                rowHeight={constant.rowHeight}
             />
         </div>
     )
@@ -92,18 +61,10 @@ export function getDataInputTable(data, id, handleUpdateInfo) {
     let updateFunc = (name, value) => {
         handleUpdateInfo(id, name, value)
     };
+    let type = data.type, basicInfo = constant.basicInfo;
     let columnDefs = [
-        // { headerName: SoilInfiltrationRate, field: SoilInfiltrationRate, cellRenderer: "singleSelectRenderer", name: SoilInfiltrationRate, options: { "yes": 1, "no": 0 } },
-        // { headerName: SurfaceSlope, field: SurfaceSlope, cellRenderer: "singleSelectRenderer", name: SurfaceSlope, options: { "<1.0": 0, ">5.0": 1, ">10": 2, ">15": 3 } },
-        // { headerName: Climate, field: Climate, cellRenderer: "singleSelectRenderer", name: Climate, options: { "yes": 1, "no": 0 } },
-        // { headerName: Depth, field: Depth, cellRenderer: "singleSelectRenderer", name: Depth, options: { "yes": 1, "no": 0 }, width: 300 },
-        // { headerName: ProtectionArea, field: ProtectionArea, cellRenderer: "singleSelectRenderer", name: ProtectionArea, options: { "yes": 1, "no": 0 } },
-        // { headerName: PollutionHotSpot , field: PollutionHotSpot, cellRenderer: "singleSelectRenderer", name: PollutionHotSpot, options: { "yes": 1, "no": 0 } },
-        // { headerName: HeavyTrafficLoading, field: HeavyTrafficLoading, cellRenderer: "singleSelectRenderer", name: HeavyTrafficLoading, options: { "yes": 1, "no": 0 } },
-        // { headerName: LandUse, field: LandUse, cellRenderer: "singleSelectRenderer", name: LandUse, options: { "Residential": "Residential", "Commercial/Industrial": "Commercial/Industrial", "Row": "Row"}, width: 300  }
-    
-        { headerName: "Site Characteristics", field: "Site Characteristics", width: 400 },
-        { headerName: "Value", field: "Value", cellRenderer: "singleSelectRenderer" }
+        { headerName: basicInfo[type].headerName, field: basicInfo[type].headerName, width: 400 },
+        { headerName: "Value", field: "Value", cellRenderer: "singleSelectRenderer", cellRendererParams: data }
     ];
     let defaultColDef = { cellValueChange: updateFunc, filter: false };
     let rowData = getInputRowData(data);
@@ -118,13 +79,6 @@ export function isVaildToCalculate(data) {
 
 
 export function getResultTables(sourceData) {
-    // let rowData = getResultRowData(sourceData);
-    // let columnDefs = [
-    //     { headerName: Name, field: name },
-    //     { headerName: Width, field: width },
-    //     { headerName: Length, field: length },
-    // ];
-    // return getAgGridTable(rowData, columnDefs);
     return null;
 }
 
@@ -142,21 +96,6 @@ export function overRideLeaflet(L) {
                 handler: new L.Draw.Polygon(map, this.options.ground),
                 title: "Draw a Ground"
             },
-            // {
-            //     enabled: this.options.house,
-            //     handler: new L.Draw.Rectangle(map, this.options.house),
-            //     title: "Draw a House"
-            // },
-            // {
-            //     enabled: this.options.hole,
-            //     handler: new L.Draw.Circle(map, this.options.hole),
-            //     title: "Draw a Hole"
-            // },
-            // {
-            //     enabled: this.options.polyline,
-            //     handler: new L.Draw.Polyline(map, this.options.polyline),
-            //     title: "Draw a ployline"
-            // }
         ];
     };
 }

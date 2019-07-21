@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import { Select } from 'antd';
-import * as helpers from '../DataHelper';
+import * as constant from '../Component/Constant';
 
 const { Option } = Select;
 export default class SingleSelectRenderer extends Component {
@@ -10,13 +10,16 @@ export default class SingleSelectRenderer extends Component {
     }
 
     render() {
-        let data = this.props.data;
-        let characteristics = data["Site Characteristics"];
-        const options = helpers.optionsMap[characteristics];
+        let rowData = this.props.data;
+        let columnData = this.props.colDef.cellRendererParams;
+        let type = columnData.type;
+        let basicInfo = constant.basicInfo;
+        let characteristics = rowData[basicInfo[type].headerName];
+        const options = basicInfo[type].optionsMap[characteristics];
         const optionsList = Object.keys(options).map(option => 
             <Option key={options[option]} value={options[option]}>{option}</Option>)
         return (
-            <Select style={{ width: 50, height: 20 }} onChange={val => this.handleChange(characteristics, val)} value={data.Value}>
+            <Select style={{ width: 50, height: 20 }} onChange={val => this.handleChange(characteristics, val)} value={rowData.Value}>
                 {optionsList}
             </Select>
         );

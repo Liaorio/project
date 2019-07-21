@@ -3,6 +3,7 @@ import { Map, TileLayer, Marker, ImageOverlay } from 'react-leaflet';
 import { Collapse, Radio, Input, Modal } from 'antd';
 import * as L from 'leaflet';
 import ImageUpload from './Component/ImageUpload';
+import * as constant from './Component/Constant';
 import * as DataHelper from './DataHelper';
 import ResultTable from './Component/ResultTables';
 import PickedInfo from './Component/PickedInfo';
@@ -100,23 +101,36 @@ export default class DataInputView extends Component {
 			this.addMarker(map, layer, type, title);			
 			drawnItems.addLayer(layer);
 
-			if (type === water) {
-				// L.GeometryUtil.distance(_map, _firstLatLng, _secondLatLng); calculate distance
-				//var seeArea = L.GeometryUtil.geodesicArea(layer.getLatLngs()[0]);
-				//console.log(seeArea);
-				
-			}
-
 			let leafId = `${layer['_leaflet_id']}`;
 			layer.on('click', () => {
 				this.handleExpandFolder([leafId]);
 			});
-			this.props.handleInputData({
-				id: `${leafId}`,
-				type: type,
-				title: title,
-				...DataHelper.dataObj
-			});
+
+			//L.GeometryUtil.distance(_map, _firstLatLng, _secondLatLng);
+			//var seeArea = L.GeometryUtil.geodesicArea(layer.getLatLngs()[0]);	
+			switch(type) {
+				case water:
+					this.props.handleInputData({
+						id: `${leafId}`,
+						type: type,
+						title: title,
+						...constant.basicInfo.water.dataConstructor
+					});
+					break;
+
+				case ground:
+					this.props.handleInputData({
+						id: `${leafId}`,
+						type: type,
+						title: title,
+						...constant.basicInfo.ground.dataConstructor
+					});
+					break;
+				
+				default:
+					break;
+			}
+	
 			//console.log('GEO JSONNNN', drawnItems.toGeoJSON());
 		});
 		map.on(L.Draw.Event.EDITED, (e) => {
