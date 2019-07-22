@@ -1,10 +1,12 @@
 import React, { Component } from 'react';
 import { Map, TileLayer, Marker, ImageOverlay } from 'react-leaflet';
-import { Collapse, Empty, Radio, Button, Input, Modal } from 'antd';
+import { Collapse, Radio, Input, Modal } from 'antd';
 import * as L from 'leaflet';
 import ImageUpload from './Component/ImageUpload';
+import * as constant from './Component/Constant';
 import * as DataHelper from './DataHelper';
 import ResultTable from './Component/ResultTables';
+import PickedInfo from './Component/PickedInfo';
 import 'leaflet-draw';
 import './DataInput.css';
 import 'leaflet/dist/leaflet.css';
@@ -18,10 +20,10 @@ const api = "https://maps.googleapis.com/maps/api/geocode/json?address=";
 const apiKey = "AIzaSyC8iIraUUTwAjRCzjcIz81KVX7ML1l0IV8";
 
 
-const water = "water", ground = "ground", house = "house", hole = "hole";
-const Water = "Water", Ground = "Ground", House = "House", Hole = "Hole";
+const site = "site", lot = "lot";
+const Site = "Site", Lot = "Lot";
 const tileTypeObj = Object.freeze({ Map: 1, Picture: 2 });
-const layerTypeObj = Object.freeze({ house: House, hole: Hole, water: Water, ground: Ground });
+const layerTypeObj = Object.freeze({ site: Site, lot: Lot });
 
 
 export default class DataInputView extends Component {
@@ -49,28 +51,16 @@ export default class DataInputView extends Component {
 		const drawControl = new L.Control.Draw({
 			position: 'topright',
 			draw: {
-				water: {
+				site: {
 					shapeOptions: {
 						color: 'green',
-						type: water
+						type: site
 					},
 				},
-				ground: {
+				lot: {
 					shapeOptions: {
 						color: 'blue',
-						type: ground
-					},
-				},
-				house: {
-					shapeOptions: {
-						color: 'red',
-						type: house
-					},
-				},
-				hole:{
-					shapeOptions: {
-						color: 'orange',
-						type: hole
+						type: lot
 					},
 				},
 				polyline: false,
@@ -99,28 +89,44 @@ export default class DataInputView extends Component {
 			this.addMarker(map, layer, type, title);			
 			drawnItems.addLayer(layer);
 
-			if (type === water) {
-				// L.GeometryUtil.distance(_map, _firstLatLng, _secondLatLng); calculate distance
-				var seeArea = L.GeometryUtil.geodesicArea(layer.getLatLngs()[0]);
-				console.log(seeArea);
-			}
-
 			let leafId = `${layer['_leaflet_id']}`;
 			layer.on('click', () => {
 				this.handleExpandFolder([leafId]);
 			});
-			this.props.handleInputData({
-				id: `${leafId}`,
-				type: type,
-				title: title,
-				length: "",
-				width: "",
-			});
+
+			//L.GeometryUtil.distance(_map, _firstLatLng, _secondLatLng);
+			//var seeArea = L.GeometryUtil.geodesicArea(layer.getLatLngs()[0]);	
+			switch(type) {
+				case site:
+					this.props.handleInputData({
+						id: `${leafId}`,
+						type: type,
+						title: title,
+						...constant.basicInfo.site.dataConstructor
+					});
+					break;
+
+				case lot:
+					this.props.handleInputData({
+						id: `${leafId}`,
+						type: type,
+						title: title,
+						...constant.basicInfo.lot.dataConstructor
+					});
+					break;
+				
+				default:
+					break;
+			}
+	
 			//console.log('GEO JSONNNN', drawnItems.toGeoJSON());
 		});
 		map.on(L.Draw.Event.EDITED, (e) => {
 			//const layers = e.layers;
 			//console.log(layers);
+		});
+		map.on(L.Draw.Event.DELETESTOP, e => {
+			console.log(e);
 		});
 		map.on(L.Draw.Event.DELETED, (e) => {
 			this.props.handleClearAllLayer();
@@ -197,49 +203,49 @@ export default class DataInputView extends Component {
 
 		return (
 			<div className="wrapper">
-				<Collapse defaultActiveKey="1" className="preset-container"> 
-					<Panel header="Preset Info" key="1">
-						<div>
-							<RadioGroup onChange={e => this.props.handleSelectLayerType(e.target.value)} value={layerType}>
-								<div>
-									<Radio value={tileTypeObj.Map}>Use Map</Radio>&nbsp;&nbsp;&nbsp;&nbsp;
-									<Search placeholder="Search On Map" onSearch={value => this.handleSearchAddress(value)} style={{ width: 500 }} enterButton="Search"/>
+				<Collapse defaultActiveKey="1" className="preset-container">
+					<Panel header="Site Info" key="1">
+						<Collapse defaultActiveKey="1">
+							<Panel header="Preset" key="1">
+								<div className="preset-wrapper">
+									<RadioGroup onChange={e => this.props.handleSelectLayerType(e.target.value)} value={layerType}>
+										<div>
+											<Radio value={tileTypeObj.Map}>Use Map</Radio>&nbsp;&nbsp;&nbsp;&nbsp;
+											<Search placeholder="Search On Map" onSearch={value => this.handleSearchAddress(value)} style={{ width: 500 }} enterButton="Search"/>
+										</div>
+										<br/>
+										<div style={{ display: 'flex' }}>
+											<Radio value={tileTypeObj.Picture} disabled={pictureUrl == null}>Use Picutre</Radio>
+											<ImageUpload handleUpload={this.props.handleUploadPicture} pictureUrl={pictureUrl} />
+										</div>								
+									</RadioGroup>
 								</div>
-								<br/>
-								<div style={{ display: 'flex' }}>
-									<Radio value={tileTypeObj.Picture} disabled={pictureUrl == null}>Use Picutre</Radio>
-									<ImageUpload handleUpload={this.props.handleUploadPicture} pictureUrl={pictureUrl} />
-								</div>								
-							</RadioGroup>
+							</Panel>	
+						</Collapse>
+						<div className="map-container" >
+							<Map
+								style={{ width: "70%" }}
+								ref={m => { this.leafletMap = m;}} 
+								center={centerValue} 
+								zoom={zoomVal}>
+								{usePicture 
+									? <ImageOverlay url={pictureUrl} bounds={[[-200, -200], [200, 200]]} />
+									: mapLayer
+								}
+							</Map>
+							<div className="info-container" style={{ width: "30%" }}>
+								<PickedInfo
+									data={data}
+									activeId={activeId}
+									handleExpandFolder={key => this.handleExpandFolder(key)}
+									handleGetResult={this.props.handleGetResult}
+									handleUpdateInfo={this.props.handleUpdateInfo}
+								/>
+							</div>
 						</div>
-					</Panel>	
+					</Panel>            
 				</Collapse>
-				<div className="map-container" >
-					<Map 
-						ref={m => { this.leafletMap = m;}} 
-						center={centerValue} 
-						zoom={zoomVal}>
-						{usePicture 
-							? <ImageOverlay url={pictureUrl} bounds={[[-200, -200], [200, 200]]} />
-							: mapLayer
-            			}
-					</Map>
-					<div className = "info-container">
-						{data.length > 0 
-							? <Collapse onChange={key => this.handleExpandFolder(key)} activeKey={activeId}> 
-								{data.map(item =>
-									<Panel header={item.title} key={`${item.id}`}>
-										{DataHelper.getDataInputTable(item, `${item.id}`, this.props.handleUpdateInfo)} 
-									</Panel>)
-								} 
-							</Collapse> 		
-							: <Empty description="No position selected..." style={{marginTop: '30vh'}}/>
-						}
-						<div className="cal-button-panel">
-							<Button type="primary" icon="form" disabled={DataHelper.isVaildToCalculate(data)} onClick={() => this.props.handleGetResult()}>Calculate</Button>
-						</div>
-					</div>
-				</div>
+
 				{ resultData ? <ResultTable data={resultData} /> : <span></span> }
 			</div>
 		);

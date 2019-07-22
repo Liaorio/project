@@ -2,41 +2,52 @@ import React from 'react';
 import { AgGridReact } from 'ag-grid-react';
 import 'ag-grid-community/dist/styles/ag-grid.css';
 import 'ag-grid-community/dist/styles/ag-theme-balham.css';
+import 'ag-grid-enterprise';
 
-const Name = "Name", name = "name";
-const Value = "Value", value = "value";
-const Width = "Width", width = "width";
-const Length = "Length", length = "length";
-const inputTableRows = [length, width];
+import SingleSelectRenderer from './Component/SingleSelectRenderer';
+import * as constant from './Component/Constant';
 
-function getInputRowData(dataObj) {
-    let rowData = [];
-    inputTableRows.forEach(key => {
-        let row = {};
-        row[name] = key;
-        row[value] = dataObj.hasOwnProperty(key) ? dataObj[key] : "";
-        rowData.push(row);
+const frameworkComponents = {
+    singleSelectRenderer: SingleSelectRenderer,
+}
+ 
+function getInputRowData(data) {
+    let re = [];
+    Object.keys(data).forEach(key => {
+        if(key !== "id" && key !== "type" && key !== "title" ) {
+            let rowData = {};
+            rowData[constant.basicInfo[data.type].headerName] = key;
+            rowData["Value"] = data[key];
+            re.push(rowData);
+        }
     });
-    return rowData;
+    return re;
 }
 
 function gridReady(params) {
     params.api.sizeColumnsToFit();
 }
 
+/*
 function getResultRowData(data) {
-    return data.map(item => { return { [name]: item.title, [width]: item.width, [length]: item.length }});
+    //return data.map(item => { return { [name]: item.title, [width]: item.width, [length]: item.length }});
+    return [];
 }
+*/
 
-function getAgGridTable(rowData, columnDefs, styles = { height: 'auto' }, updateFunc = null) {
+function getAgGridTable(rowData, columnDefs, defaultColDef) {
+    const height = (rowData.length + 1) * constant.rowHeight;
     return (
-        <div className="ag-theme-balham" style={{ height: styles.height }}>
+        <div className="ag-theme-balham info-table" style={{ height: height }}>
             <AgGridReact
                 columnDefs={columnDefs}
                 rowData={rowData}
-                domLayout={ styles.height ? "autoHeight" : "normal"}
-                onCellValueChanged={updateFunc}
+                defaultColDef={defaultColDef}
+                domLayout="normal"
                 onGridReady={gridReady}
+                frameworkComponents={frameworkComponents}
+                suppressContextMenu={true}
+                rowHeight={constant.rowHeight}
             />
         </div>
     )
@@ -46,19 +57,18 @@ function getAgGridTable(rowData, columnDefs, styles = { height: 'auto' }, update
 //------------------------------export functions-----------------------------//
 
 
-export function getDataInputTable(dataObj, id, handleUpdateInfo) {
-    let rowData = getInputRowData(dataObj);
+export function getDataInputTable(data, id, handleUpdateInfo) {
+    let updateFunc = (name, value) => {
+        handleUpdateInfo(id, name, value)
+    };
+    let type = data.type, basicInfo = constant.basicInfo;
     let columnDefs = [
-        { headerName: Name, field: name, width: 100 },
-        { headerName: Value, field: value, editable: true },
+        { headerName: basicInfo[type].headerName, field: basicInfo[type].headerName, width: 400 },
+        { headerName: "Value", field: "Value", cellRenderer: "singleSelectRenderer", cellRendererParams: data }
     ];
-    let styles = {
-        height: 100
-    };
-    let updateFunc = (params) => {
-        handleUpdateInfo(id, params.data)
-    };
-    return getAgGridTable(rowData, columnDefs, styles, updateFunc);
+    let defaultColDef = { cellValueChange: updateFunc, filter: false };
+    let rowData = getInputRowData(data);
+    return getAgGridTable(rowData, columnDefs, defaultColDef);
 }
 
 
@@ -69,13 +79,7 @@ export function isVaildToCalculate(data) {
 
 
 export function getResultTables(sourceData) {
-    let rowData = getResultRowData(sourceData);
-    let columnDefs = [
-        { headerName: Name, field: name },
-        { headerName: Width, field: width },
-        { headerName: Length, field: length },
-    ];
-    return getAgGridTable(rowData, columnDefs);
+    return null;
 }
 
 
@@ -83,30 +87,20 @@ export function overRideLeaflet(L) {
     L.DrawToolbar.prototype.getModeHandlers = function (map) {
         return [
             {
-                enabled: this.options.water,
-                handler: new L.Draw.Polygon(map, this.options.water),
-                title: "Draw a Water",
+                enabled: this.options.site,
+                handler: new L.Draw.Polygon(map, this.options.site),
+                title: "Draw a Site",
             },
             {
-                enabled: this.options.ground,
-                handler: new L.Draw.Polygon(map, this.options.ground),
-                title: "Draw a Ground"
+                enabled: this.options.lot,
+                handler: new L.Draw.Polygon(map, this.options.lot),
+                title: "Draw a Lot"
             },
-            {
-                enabled: this.options.house,
-                handler: new L.Draw.Rectangle(map, this.options.house),
-                title: "Draw a House"
-            },
-            {
-                enabled: this.options.hole,
-                handler: new L.Draw.Circle(map, this.options.hole),
-                title: "Draw a Hole"
-            },
-            // {
-            //     enabled: this.options.polyline,
-            //     handler: new L.Draw.Polyline(map, this.options.polyline),
-            //     title: "Draw a ployline"
-            // }
         ];
     };
+}
+
+
+export function isObjectEmpty(obj) {
+    return Object.keys(obj).length === 0 && obj.constructor === Object;
 }

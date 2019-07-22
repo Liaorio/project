@@ -6,8 +6,6 @@
 .map-container {
     display: flex;
     height: 75vh;
-    width: 80%;
-    margin: 0 10%;
 }
 
 .leaflet-container {
@@ -16,18 +14,21 @@
 
 .info-container {
     background: #f7f1e3;
-    width: 30%;
     overflow: scroll;
 }
 
 .preset-container, .result-container {
-    width: 80%;
-    margin: 0 10%;
+    width: 90%;
+    margin: 0 5%;
 }
 
 .result-container {
     margin-top: 50px;
     margin-bottom: 20px;
+}
+
+.preset-wrapper {
+    display: flex;
 }
 
 .preview-component {
@@ -66,16 +67,61 @@
     background: orange;
 }
 
-.water {
+.site {
     text-align: center;
     color: #fff;
     border-radius: 6px;
     background: green;
 }
 
-.ground {
+.lot {
     text-align: center;
     color: #fff;
     border-radius: 6px;
     background: blue;
 }
+
+/* .leaflet-draw-draw-polygon {
+    background: url('./static/pipeline.svg')!important;
+    background-repeat: no-repeat!important;
+    background-size: 25px 25px!important;
+    background-color: #fff!important;
+} */
+
+
+.ag-cell {
+    overflow: visible;
+    white-space: normal;
+    font-size: 1em;
+    line-height: 1.2em!important;
+    padding-left: 3px!important;
+    padding-right: 3px!important;
+    padding-top: 5px!important;
+}
+
+.ag-header-cell {
+    font-size: 1em;
+    padding-left: 3px!important;
+    padding-right: 3px!important;
+    overflow: visible;
+}
+
+.ant-select-selection--single {
+    height: 1.2em;
+}
+
+.ant-select-dropdown--single {
+    font-size: 0.8em;
+    width: 150px!important;
+}
+
+.ant-select-selection-selected-value {
+    font-size: 0.8em;
+    line-height: 1em!important;
+    padding-right: 0!important;
+}
+
+.ant-select-arrow {
+    right: 3px!important;
+}
+
