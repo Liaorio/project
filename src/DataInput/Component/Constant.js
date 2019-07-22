@@ -15,7 +15,7 @@ const FlowPathLenght = "Flow Path Length(m) < 5";
 const Lot = "Lot Planning";
 
 export const basicInfo = {
-    water: {
+    site: {
         headerName: Site,
         dataConstructor: {
             [SoilInfiltrationRate]: 0,
@@ -39,7 +39,7 @@ export const basicInfo = {
         }
     },
 
-    ground: {
+    lot: {
         headerName: Lot,
         dataConstructor: {
             [TreesAndRoads]: 0,

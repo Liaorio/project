@@ -20,10 +20,10 @@ const api = "https://maps.googleapis.com/maps/api/geocode/json?address=";
 const apiKey = "AIzaSyC8iIraUUTwAjRCzjcIz81KVX7ML1l0IV8";
 
 
-const water = "water", ground = "ground", house = "house", hole = "hole";
-const Water = "Water", Ground = "Ground", House = "House", Hole = "Hole";
+const site = "site", lot = "lot";
+const Site = "Site", Lot = "Lot";
 const tileTypeObj = Object.freeze({ Map: 1, Picture: 2 });
-const layerTypeObj = Object.freeze({ house: House, hole: Hole, water: Water, ground: Ground });
+const layerTypeObj = Object.freeze({ site: Site, lot: Lot });
 
 
 export default class DataInputView extends Component {
@@ -51,28 +51,16 @@ export default class DataInputView extends Component {
 		const drawControl = new L.Control.Draw({
 			position: 'topright',
 			draw: {
-				water: {
+				site: {
 					shapeOptions: {
 						color: 'green',
-						type: water
+						type: site
 					},
 				},
-				ground: {
+				lot: {
 					shapeOptions: {
 						color: 'blue',
-						type: ground
-					},
-				},
-				house: {
-					shapeOptions: {
-						color: 'red',
-						type: house
-					},
-				},
-				hole:{
-					shapeOptions: {
-						color: 'orange',
-						type: hole
+						type: lot
 					},
 				},
 				polyline: false,
@@ -109,21 +97,21 @@ export default class DataInputView extends Component {
 			//L.GeometryUtil.distance(_map, _firstLatLng, _secondLatLng);
 			//var seeArea = L.GeometryUtil.geodesicArea(layer.getLatLngs()[0]);	
 			switch(type) {
-				case water:
+				case site:
 					this.props.handleInputData({
 						id: `${leafId}`,
 						type: type,
 						title: title,
-						...constant.basicInfo.water.dataConstructor
+						...constant.basicInfo.site.dataConstructor
 					});
 					break;
 
-				case ground:
+				case lot:
 					this.props.handleInputData({
 						id: `${leafId}`,
 						type: type,
 						title: title,
-						...constant.basicInfo.ground.dataConstructor
+						...constant.basicInfo.lot.dataConstructor
 					});
 					break;
 				

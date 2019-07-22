@@ -87,14 +87,14 @@ export function overRideLeaflet(L) {
     L.DrawToolbar.prototype.getModeHandlers = function (map) {
         return [
             {
-                enabled: this.options.water,
-                handler: new L.Draw.Polygon(map, this.options.water),
-                title: "Draw a Water",
+                enabled: this.options.site,
+                handler: new L.Draw.Polygon(map, this.options.site),
+                title: "Draw a Site",
             },
             {
-                enabled: this.options.ground,
-                handler: new L.Draw.Polygon(map, this.options.ground),
-                title: "Draw a Ground"
+                enabled: this.options.lot,
+                handler: new L.Draw.Polygon(map, this.options.lot),
+                title: "Draw a Lot"
             },
         ];
     };
