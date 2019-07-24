@@ -43,8 +43,8 @@ export const basicInfo = {
         headerName: Lot,
         dataConstructor: {
             [TreesAndRoads]: 0,
-            [DrainageArea]: null,
-            [DAorTA]: 0,
+            [DrainageArea]: 0,
+            [DAorTA]: null,
             [FlowPathLenght]: 0,
         },
         optionsMap: {
