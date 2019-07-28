@@ -2,10 +2,10 @@
 const INPUT_DATA = 'DataInput/INPUT_DATA';
 const EXPAND_FOLDER = 'DataInput/EXPAND_FOLDER';
 const UPLOAD_LAYER = 'DataInput/UPLOAD_LAYER';
-const CLEAR_ALL_LAYER = 'DataInput/CLEAR_ALL_LAYER';
 const SELECT_LAYER_TYPE = 'DataInput/SELECT_LAYER_TYPE';
 const UPDATE_INFO = 'DataInput/UPDATE_INFO';
 const GET_RESULT = 'DataInput/GET_RESULT';
+const CLEAR_LAYERS_BY_ID = 'DataInput/CLEAR_LAYERS_BY_ID';
 
 export const inputData = (data) => ({
     type: INPUT_DATA,
@@ -32,8 +32,9 @@ export const updateInfo = (id, name, value) => ({
     id, name, value
 });
 
-export const claerAllLayer = () => ({
-    type: CLEAR_ALL_LAYER
+export const clearLayersById = idList => ({
+    type: CLEAR_LAYERS_BY_ID,
+    idList
 });
 
 export const getResult = () => ({
@@ -95,13 +96,15 @@ export default (state = initialState, action) => {
                 ...state,
                 data: _data
             }
-        
-        case CLEAR_ALL_LAYER:
+
+        case CLEAR_LAYERS_BY_ID:
+            let { idList } = action;
+            let filteredData = state.data.filter(item => idList.includes(item.id));
             return {
                 ...state,
-                data: [],
-                activeId: []
-            }
+                activeId: idList,
+                data: filteredData
+            }    
 
         case GET_RESULT:
             return {

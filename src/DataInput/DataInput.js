@@ -23,8 +23,8 @@ const mapDispatchToProps = dispatch => ({
     handleUpdateInfo: (id, name, value) => {
         dispatch(index.updateInfo(id, name, value));
     },
-    handleClearAllLayer: () => {
-        dispatch(index.claerAllLayer());
+    handleClearLayersById: (idList) => {
+        dispatch(index.clearLayersById(idList));
     },
     handleGetResult: () => {
         dispatch(index.getResult());

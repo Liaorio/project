@@ -125,12 +125,18 @@ export default class DataInputView extends Component {
 			//const layers = e.layers;
 			//console.log(layers);
 		});
-		map.on(L.Draw.Event.DELETESTOP, e => {
-			console.log(e);
+		map.on(L.Draw.Event.DELETESTOP, (e) => {
+			let leftIds = [];
+			map.eachLayer(layer => {
+				if(layer.hasOwnProperty('_layers') && leftIds.length === 0) {
+								leftIds = Object.keys(layer['_layers']);
+				}
+			});
+			this.props.handleClearLayersById(leftIds);
 		});
-		map.on(L.Draw.Event.DELETED, (e) => {
-			this.props.handleClearAllLayer();
-		});
+		// map.on(L.Draw.Event.DELETED, (e) => {
+		// 	this.props.handleClearAllLayer();
+		// });
 		this.findCoordinates();
 	}
 
