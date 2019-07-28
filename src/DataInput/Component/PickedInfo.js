@@ -32,7 +32,7 @@ const PickedInfoContainer = ({data, activeId, handleExpandFolder, handleGetResul
                 ? <Empty description="No position selected..." style={{marginTop: '30vh'}}/>
                 : <Collapse onChange={key => setActiveGroup(key)} activeKey={activeGroup}>
                     {Object.keys(infoDataObj).map(key => 
-                        <Panel key={key} header={<h3 style={{ fontWeight: 900 }}>{key}</h3>}>
+                        <Panel key={key} header={<h3 style={{ fontWeight: 900 }}>{`${key}(s)`}</h3>}>
                             <Collapse onChange={key => handleExpandFolder(key)} activeKey={activeId}> 
                                 {infoDataObj[key].map(item =>
                                 <Panel className="table-panel" header={item.title} key={`${item.id}`}>

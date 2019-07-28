@@ -19,7 +19,7 @@ export default class SingleSelectRenderer extends Component {
         const optionsList = Object.keys(options).map(option => 
             <Option key={options[option]} value={options[option]}>{option}</Option>)
         return (
-            <Select style={{ width: 50, height: 20 }} onChange={val => this.handleChange(characteristics, val)} value={rowData.Value}>
+            <Select style={{ width: '100%', height: 20 }} onChange={val => this.handleChange(characteristics, val)} value={rowData.Value}>
                 {optionsList}
             </Select>
         );
